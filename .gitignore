@@ -1,2 +1,12 @@
-v1/__pycache__/
 db.sqlite3
+.vscode
+pos_api/__pycache__/
+pos_api/settings/__pycache__/
+v1/__pycache__/
+v1/management/__pycache__/
+v1/management/commands/__pycache__/
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
