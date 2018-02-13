@@ -19,3 +19,33 @@ DATABASES = {
         'PORT': os.environ.get('RDS_PORT')
     }
 }
+
+###################################
+# s3 storage
+###################################
+
+MEDIAFILES_LOCATION = 'media'
+STATICFILES_LOCATION = 'static'
+
+DEFAULT_FILE_STORAGE = 'pos_api.config.S3utils.MediaStorage' 
+STATICFILES_STORAGE = 'pos_api.config.S3utils.StaticStorage' 
+
+AWS_STORAGE_BUCKET_NAME = 'pos-api-s3'
+AWS_S3_REGION_NAME = 'ap-south-1'  # e.g. us-east-2
+AWS_ACCESS_KEY_ID = 'AKIAJ7YNGZ4BHCCGQW3Q'
+AWS_SECRET_ACCESS_KEY = 'axkzVDuvC+x8L4hIL3W+9OFckFXEbcd3yWIZZOhq'
+
+AWS_S3_OBJECT_PARAMETERS = {
+    'Expires': 'Thu, 31 Dec 2099 20:00:00 GMT',
+    'CacheControl': 'max-age=94608000',
+}
+
+AWS_QUERYSTRING_AUTH = False
+
+S3_URL = 'http://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
+
+STATIC_DIRECTORY = '/static/'
+MEDIA_DIRECTORY = '/media/'
+
+STATIC_URL = S3_URL + STATIC_DIRECTORY
+MEDIA_URL = S3_URL + MEDIA_DIRECTORY
