@@ -27,7 +27,6 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     # path('', generic.RedirectView.as_view(
     #      url='/api/', permanent=False)),
-    path('', generic.TemplateView.as_view(template_name="index.html")),
     path('api/', get_schema_view()),
     path('api/v1/', include('v1.urls')),
     path('api/auth/', include(
@@ -35,4 +34,5 @@ urlpatterns = [
     path('api/auth/token/obtain/', TokenObtainPairView.as_view()),
     path('api/auth/token/refresh/', TokenRefreshView.as_view()),
     path('admin/', admin.site.urls),
+    path('', generic.TemplateView.as_view(template_name="index.html")),
 ]
