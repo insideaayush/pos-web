@@ -12,3 +12,5 @@ v1/management/commands/__pycache__/
 !.elasticbeanstalk/*.global.yml
 
 webpack-stats.dev.json
+webpack-stats.prod.json
+assets/
