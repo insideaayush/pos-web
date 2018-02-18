@@ -5,6 +5,7 @@ pos_api/settings/__pycache__/
 v1/__pycache__/
 v1/management/__pycache__/
 v1/management/commands/__pycache__/
+v1/migrations/__pycache__/
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
