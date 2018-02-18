@@ -13,6 +13,8 @@ import { Route, Switch } from 'react-router'
 import Login from './containers/Login';
 import PrivateRoute from './containers/PrivateRoute';
 
+import 'typeface-roboto'
+
 const history = createHistory()
 const store = configureStore(history)
 
