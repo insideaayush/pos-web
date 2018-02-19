@@ -8,6 +8,7 @@ schema_view = get_schema_view(title="POS API")
 router = DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'staff', views.StaffViewSet)
+router.register(r'products', views.ProductViewset)
 
 urlpatterns = [
     path('schema/', schema_view),
