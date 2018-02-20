@@ -13,7 +13,7 @@ const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => (
                     state: { from: props.location }
                 }} />
             )
-    )} />
+    )}/>
 )
 const mapStateToProps = (state) => ({
     isAuthenticated: reducers.isAuthenticated(state)

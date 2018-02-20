@@ -4,16 +4,17 @@ import ReactDOM from 'react-dom';
 import createHistory from 'history/createBrowserHistory'
 import { ConnectedRouter } from 'react-router-redux'
 import { Provider } from 'react-redux'
-import App from './App'
-import './index.css';
-import 'bootstrap/dist/css/bootstrap.css';
 import configureStore from './store'
 import registerServiceWorker from './registerServiceWorker';
 import { Route, Switch } from 'react-router'
-import Login from './containers/Login';
 import PrivateRoute from './containers/PrivateRoute';
-
+import './index.css';
 import 'typeface-roboto'
+import 'bootstrap/dist/css/bootstrap.css';
+
+// Apps
+import App from './App'
+import Login from './containers/Login';
 
 const history = createHistory()
 const store = configureStore(history)
@@ -23,7 +24,7 @@ ReactDOM.render((
         <ConnectedRouter history={history}>
             <Switch>
                 <Route exact path="/login/" component={Login} />
-                <PrivateRoute path="/" component={App} />
+                <PrivateRoute path="/" component={App}/>
             </Switch>
         </ConnectedRouter>
     </Provider>

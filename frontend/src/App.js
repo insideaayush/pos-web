@@ -10,6 +10,10 @@ import Hidden from 'material-ui/Hidden';
 import Divider from 'material-ui/Divider';
 import MenuIcon from 'material-ui-icons/Menu';
 
+// In-App Routing
+import { Route } from 'react-router'
+import SideBarItems from './components/SideBarItems'
+
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -60,6 +64,50 @@ const styles = theme => ({
     },
 });
 
+const routes = [
+    {
+        path: "/",
+        exact: true,
+        sidebar: () => <div>home!</div>,
+        main: () => <h2>Home</h2>
+    },
+    {
+        path: "/sale/add",
+        sidebar: () => <div>shoelaces!</div>,
+        main: () => <h2>/sale/add</h2>
+    },
+    {
+        path: "/purchase/add",
+        sidebar: () => <div>shoelaces!</div>,
+        main: () => <h2>purchase/add</h2>
+    },
+    {
+        path: "/products",
+        sidebar: () => <div>bubblegum!</div>,
+        main: () => <h2>products</h2>
+    },
+    {
+        path: "/sales",
+        sidebar: () => <div>shoelaces!</div>,
+        main: () => <h2>sales</h2>
+    },
+    {
+        path: "/purchases",
+        sidebar: () => <div>shoelaces!</div>,
+        main: () => <h2>purchases</h2>
+    },
+    {
+        path: "/settings",
+        sidebar: () => <div>shoelaces!</div>,
+        main: () => <h2>settings</h2>
+    },
+    {
+        path: "/logout",
+        sidebar: () => <div>shoelaces!</div>,
+        main: () => <h2>logout</h2>
+    }
+];
+
 class ResponsiveDrawer extends React.Component {
     state = {
         mobileOpen: false,
@@ -82,9 +130,7 @@ class ResponsiveDrawer extends React.Component {
                     </Toolbar>
                 </div>
                 <Divider />
-                {/* <List>{mailFolderListItems}</List> */}
-                <Divider />
-                Logout
+                <SideBarItems />             
             </div>
         );
 
@@ -134,7 +180,14 @@ class ResponsiveDrawer extends React.Component {
                         </Drawer>
                     </Hidden>
                     <main className={classes.content}>
-                        <Typography noWrap>{'Your Content goes here!'}</Typography>
+                        {routes.map((route, index) => (
+                            <Route
+                                key={index}
+                                path={route.path}
+                                exact={route.exact}
+                                component={route.main}
+                            />
+                        ))}
                     </main>
                 </div>
             </div>
