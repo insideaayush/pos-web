@@ -12,3 +12,9 @@ body {
   justify-content: center;
   background-image: url('https://s3.ap-south-1.amazonaws.com/pos-api-s3/pexels-photo-879832.jpeg')
 }
+
+.loader {
+  position: absolute;
+  left: 47.5%;
+  top: 50%;
+}

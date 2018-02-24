@@ -13,13 +13,14 @@ import MenuIcon from 'material-ui-icons/Menu';
 // In-App Routing
 import { Route } from 'react-router'
 import SideBarItems from './components/SideBarItems'
+import Products from './containers/Products'
 
 const drawerWidth = 240;
 
 const styles = theme => ({
     root: {
         width: '100%',
-        height: 430,
+        minHeight: '100%',
         marginTop: theme.spacing.unit * 0,
         zIndex: 1,
         overflow: 'hidden',
@@ -69,42 +70,50 @@ const routes = [
         path: "/",
         exact: true,
         sidebar: () => <div>home!</div>,
-        main: () => <h2>Home</h2>
+        main: () => <h2>Home</h2>,
+        title: () => <span> Home</span>,
     },
     {
         path: "/sale/add",
         sidebar: () => <div>shoelaces!</div>,
-        main: () => <h2>/sale/add</h2>
+        main: () => <h2>/sale/add</h2>,
+        title: () => <span> Add Sale</span>,
     },
     {
         path: "/purchase/add",
         sidebar: () => <div>shoelaces!</div>,
-        main: () => <h2>purchase/add</h2>
+        main: () => <h2>purchase/add</h2>,
+        title: () => <span> Add a Purchase</span>,
     },
     {
         path: "/products",
         sidebar: () => <div>bubblegum!</div>,
-        main: () => <h2>products</h2>
+        main: () => <Products />,
+        title: () => <span> Products</span>,
     },
     {
         path: "/sales",
         sidebar: () => <div>shoelaces!</div>,
-        main: () => <h2>sales</h2>
+        main: () => <h2>sales</h2>,
+        title: () => <span> Sales</span>,
     },
     {
         path: "/purchases",
         sidebar: () => <div>shoelaces!</div>,
-        main: () => <h2>purchases</h2>
+        main: () => <h2>purchases</h2>,
+        title: () => <span> Purchases</span>,
     },
     {
         path: "/settings",
         sidebar: () => <div>shoelaces!</div>,
-        main: () => <h2>settings</h2>
+        main: () => <h2>settings</h2>,
+        title: () => <span> Settings</span>,
     },
     {
         path: "/logout",
         sidebar: () => <div>shoelaces!</div>,
-        main: () => <h2>logout</h2>
+        main: () => <h2>logout</h2>,
+        title: () => <span> ''</span>,
     }
 ];
 
@@ -148,7 +157,14 @@ class ResponsiveDrawer extends React.Component {
                                 <MenuIcon />
                             </IconButton>
                             <Typography variant="title" color="inherit" noWrap>
-                                Cash Register
+                                {routes.map((route, index) => (
+                                    <Route
+                                        key={index}
+                                        path={route.path}
+                                        exact={route.exact}
+                                        component={route.title}
+                                    />
+                                ))}
                             </Typography>
                         </Toolbar>
                     </AppBar>
