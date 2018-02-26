@@ -21,10 +21,10 @@ import {
 import { CircularProgress } from 'material-ui/Progress';
 import Typography from 'material-ui/Typography';
 
-const comparePrices = (a,b) => {
+const comparePrices = (a, b) => {
     const _a = parseFloat(a)
     const _b = parseFloat(b)
-    if(_a === _b){
+    if (_a === _b) {
         return 0
     }
     return (_a < _b) ? -1 : 1
@@ -34,7 +34,7 @@ const RowDetail = ({ row }) => (
     <div><strong>Description: </strong>{row.description}</div>
 );
 
-class ProductTable extends React.PureComponent {
+class SalesTable extends React.PureComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -89,45 +89,45 @@ class ProductTable extends React.PureComponent {
     }
 
     commitChanges({ added, changed, deleted }) {
-        var rows  = this.loadRowsFromProps();
+        var rows = this.loadRowsFromProps();
         if (added) {
             console.log(added)
             added = added[0]
             const data = {
-                name : (added.product) ? (added.product) : null,
-                product_id : (added.code) ? (added.code) : null,
-                description : (added.description) ? (added.description) : null,
-                category : (added.category) ? (added.category) : null,
-                brand : (added.brand) ? (added.brand) : null,
-                size : (added.size) ? (added.size) : null,
-                color : (added.color) ? (added.color) : null,
-                design : (added.design) ? (added.design) : null,
-                quality : (added.quality) ? (added.quality) : null,
-                cost_price : (added.cp) ? (added.cp) : null,
-                selling_price : (added.sp) ? (added.sp) : null,
-                max_retail_price : (added.mrp) ? (added.mrp) : null,
+                name: (added.product) ? (added.product) : null,
+                product_id: (added.code) ? (added.code) : null,
+                description: (added.description) ? (added.description) : null,
+                category: (added.category) ? (added.category) : null,
+                brand: (added.brand) ? (added.brand) : null,
+                size: (added.size) ? (added.size) : null,
+                color: (added.color) ? (added.color) : null,
+                design: (added.design) ? (added.design) : null,
+                quality: (added.quality) ? (added.quality) : null,
+                cost_price: (added.cp) ? (added.cp) : null,
+                selling_price: (added.sp) ? (added.sp) : null,
+                max_retail_price: (added.mrp) ? (added.mrp) : null,
             }
             this.props.createNewProduct(data)
         }
         if (changed) {
             console.log(changed)
-            rows = rows.map((row, index) =>{
-                if(changed[index]){
-                    let data = Object.assign({}, 
-                        (changed[index].product) ? { name: changed[index].product} : undefined,
-                        (changed[index].code) ? { product_id: changed[index].code} : undefined,
-                        (changed[index].description) ? { description: changed[index].description} : undefined,
+            rows = rows.map((row, index) => {
+                if (changed[index]) {
+                    let data = Object.assign({},
+                        (changed[index].product) ? { name: changed[index].product } : undefined,
+                        (changed[index].code) ? { product_id: changed[index].code } : undefined,
+                        (changed[index].description) ? { description: changed[index].description } : undefined,
                         (changed[index].category) ? { category: changed[index].category } : undefined,
-                        (changed[index].brand) ? { brand: changed[index].brand} : undefined,
-                        (changed[index].size) ? { size: changed[index].size} : undefined,
-                        (changed[index].color) ? { color: changed[index].color} : undefined,
-                        (changed[index].design) ? { design: changed[index].design} : undefined,
-                        (changed[index].quality) ? { quality: changed[index].quality} : undefined,
-                        (changed[index].cp) ? { cost_price: changed[index].cp} : undefined,
-                        (changed[index].sp) ? { selling_price: changed[index].sp} : undefined,
-                        (changed[index].mrp) ? { max_retail_price: changed[index].mrp} : undefined,
+                        (changed[index].brand) ? { brand: changed[index].brand } : undefined,
+                        (changed[index].size) ? { size: changed[index].size } : undefined,
+                        (changed[index].color) ? { color: changed[index].color } : undefined,
+                        (changed[index].design) ? { design: changed[index].design } : undefined,
+                        (changed[index].quality) ? { quality: changed[index].quality } : undefined,
+                        (changed[index].cp) ? { cost_price: changed[index].cp } : undefined,
+                        (changed[index].sp) ? { selling_price: changed[index].sp } : undefined,
+                        (changed[index].mrp) ? { max_retail_price: changed[index].mrp } : undefined,
                     )
-                    this.props.editProductDetail(row.id,data)
+                    this.props.editProductDetail(row.id, data)
                 }
             })
         }
@@ -149,9 +149,9 @@ class ProductTable extends React.PureComponent {
                         <SortingState
                             defaultSorting={[{ columnName: 'product', direction: 'asc' }]}
                         />
-                        <IntegratedSorting columnExtensions={integratedSortingColumnExtensions}/>
-                        <FilteringState defaultFilters={[]}/>
-                        <IntegratedFiltering/>
+                        <IntegratedSorting columnExtensions={integratedSortingColumnExtensions} />
+                        <FilteringState defaultFilters={[]} />
+                        <IntegratedFiltering />
                         <PagingState
                             defaultCurrentPage={0}
                             defaultPageSize={5}
@@ -163,7 +163,7 @@ class ProductTable extends React.PureComponent {
                         <EditingState
                             onCommitChanges={this.commitChanges}
                         />
-                        <Table/>
+                        <Table />
                         <TableHeaderRow showSortingControls />
                         <TableRowDetail
                             contentComponent={RowDetail}
@@ -188,11 +188,11 @@ class ProductTable extends React.PureComponent {
 
 export default connect(
     state => ({ products: allProducts(state), loading: isLoadingAllProducts(state) }),
-    { 
-        getProductList: getProductList, 
-        editProductDetail: editProductDetail, 
+    {
+        getProductList: getProductList,
+        editProductDetail: editProductDetail,
         createNewProduct: createNewProduct,
         deleteProduct: deleteProduct,
-    
+
     }
-)(ProductTable);
+)(SalesTable);

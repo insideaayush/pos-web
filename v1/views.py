@@ -1,16 +1,15 @@
 from django.contrib.auth.models import User
-from .models import Staff, Product
+from .models import *
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
-from v1.serializers import UserSerializer, StaffSerializer, ProductSerializer
-
+from v1.serializers import *
 
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
-        'users' : reverse('user-list', request=request, format=format),
-        'staff' : reverse('staff-list', request=request, format=format),
-        'products' : reverse('product-list', request=request, format=format),
+        'users': reverse('user-list', request=request, format=format),
+        'products': reverse('product-list', request=request, format=format),
+        'categories': reverse('category-list', request=request, format=format),
     })
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -27,9 +26,46 @@ class StaffViewSet(viewsets.ModelViewSet):
     queryset = Staff.objects.all()
     serializer_class = StaffSerializer
 
+class CustomerViewset(viewsets.ModelViewSet):
+    queryset = Customer.objects.all()
+    serializer_class =CustomerSerializer
+
+class StoreViewset(viewsets.ModelViewSet):
+    queryset = Store.objects.all()
+    serializer_class =StoreSerializer
+
 class ProductViewset(viewsets.ModelViewSet):
     """
-
+    This view automatically provides list, detail, retrieve, update, partial update and delete actions
     """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+class PaymentViewset(viewsets.ModelViewSet):
+    """
+    This view automatically provides list, detail, retrieve, update, partial update and delete actions
+    """
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+
+class TransactionViewset(viewsets.ModelViewSet):
+    """
+    This view automatically provides list, detail, retrieve, update, partial update and delete actions
+    """
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+
+class SaleViewset(viewsets.ModelViewSet):
+    """
+    This view automatically provides list, detail, retrieve, update, partial update and delete actions
+    """
+    queryset = Sale.objects.all()
+    serializer_class = SaleSerializer
+
+class ProductInSaleViewset(viewsets.ModelViewSet):
+    """
+    This view automatically provides list, detail, retrieve, update, partial update and delete actions
+    """
+    queryset = ProductInSale.objects.all()
+    serializer_class = ProductInSaleSerializer
+

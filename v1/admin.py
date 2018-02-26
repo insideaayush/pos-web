@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Store, Staff, Customer, Payment, Transaction, Sale, Product, ProductInSale
+from .models import *
 
-# Register your models here.
+admin.site.register(AccessPermission)
 admin.site.register(Store)
 admin.site.register(Staff)
 admin.site.register(Customer)

@@ -55,6 +55,7 @@ const styles = theme => ({
     content: {
         backgroundColor: theme.palette.background.default,
         width: '100%',
+        overflowY: 'scroll',
         padding: theme.spacing.unit * 3,
         height: 'calc(100% - 56px)',
         marginTop: 56,
