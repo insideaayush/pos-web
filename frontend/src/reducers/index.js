@@ -2,11 +2,13 @@ import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 import auth, * as fromAuth from './auth'
 import products, * as fromProducts from './products'
+import sales, * as fromSales from './sales'
 
 export default combineReducers({
     auth: auth,
-    products: products,
     router: routerReducer,
+    products: products,
+    sales: sales,
 })
 
 // Auth Helper Functions
@@ -23,6 +25,7 @@ export const isRefreshTokenExpired =
 export const authErrors =
     state => fromAuth.errors(state.auth)
 
+
 export function withAuth(headers = {}) {
     return (state) => ({
         ...headers,
@@ -36,3 +39,10 @@ export const allProducts =
 
 export const isLoadingAllProducts = 
     state => fromProducts.isLoadingAllProducts(state.products)
+
+//Sales Helper Function
+export const allSales =
+    state => fromSales.allSales(state.sales)
+
+export const isLoadingAllSales =
+    state => fromSales.isLoadingAllSales(state.sales)

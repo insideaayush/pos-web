@@ -62,7 +62,11 @@ const sidebarItems = {
         {
             text: 'Logout',
             icon: <LogoutIcon />,
-            url: '/logout',
+            url: null,
+            action: (props) => {
+                // props.handleLogout()
+                props.handleLogout()
+            }
         }
     ]
 
@@ -84,16 +88,30 @@ function SimpleList(props) {
     })
     
     const secondaryList  = sidebarItems.secondary.map((item, index) => {
-        return (
-            <Link to={item.url} key={index} className={classes.list}>
-                <ListItem button>
+        if(item.url){
+            return (
+                <Link to={item.url} key={index} className={classes.list}>
+                    <ListItem button>
+                        <ListItemIcon>
+                            {item.icon}
+                        </ListItemIcon>
+                        <ListItemText primary={item.text} />
+                    </ListItem>
+                </Link>
+            )
+        }
+        else if (item.action) {
+            return (
+                <ListItem button onClick={() => item.action(props)} key={index}>
                     <ListItemIcon>
                         {item.icon}
                     </ListItemIcon>
                     <ListItemText primary={item.text} />
                 </ListItem>
-            </Link>
-        )
+            )
+        }
+        else 
+            return null
     })
 
     return (

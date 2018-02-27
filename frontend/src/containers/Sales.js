@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { createNewProduct, editProductDetail, getProductList, deleteProduct } from '../actions/products'
-import { allProducts, isLoadingAllProducts } from '../reducers'
+import { getSalesList } from '../actions/sales'
+import { allSales, isLoadingAllSales } from '../reducers'
 import Paper from 'material-ui/Paper'
 import {
     SortingState,
@@ -11,15 +11,12 @@ import {
     PagingState,
     IntegratedPaging,
     RowDetailState,
-    EditingState,
 } from '@devexpress/dx-react-grid';
 
 import {
-    Grid, Table, TableHeaderRow, TableFilterRow, PagingPanel, TableRowDetail, TableEditRow,
-    TableEditColumn,
+    Grid, Table, TableHeaderRow, TableFilterRow, PagingPanel, TableRowDetail,
 } from '@devexpress/dx-react-grid-material-ui'
 import { CircularProgress } from 'material-ui/Progress';
-import Typography from 'material-ui/Typography';
 
 const comparePrices = (a, b) => {
     const _a = parseFloat(a)
@@ -31,7 +28,7 @@ const comparePrices = (a, b) => {
 }
 
 const RowDetail = ({ row }) => (
-    <div><strong>Description: </strong>{row.description}</div>
+    <div><strong>Description: </strong></div>
 );
 
 class SalesTable extends React.PureComponent {
@@ -39,104 +36,50 @@ class SalesTable extends React.PureComponent {
         super(props)
         this.state = {
             columns: [
-                { name: 'product', title: 'Product' },
-                { name: 'code', title: 'Product Code' },
-                { name: 'category', title: 'Category' },
-                { name: 'brand', title: 'Brand' },
-                { name: 'size', title: 'Size' },
-                { name: 'color', title: 'Color' },
-                { name: 'design', title: 'Design' },
-                { name: 'quality', title: 'Quality' },
-                { name: 'cp', title: 'Cost Price' },
-                { name: 'sp', title: 'Selling Price' },
-                { name: 'mrp', title: 'MRP' },
+                { name: 'invoice_no', title: 'Invoice' },
+                { name: 'date', title: 'Date' },
+                { name: 'customer', title: 'Customer' },
+                { name: 'staff', title: 'Staff' },
+                { name: 'store', title: 'Store' },
+                { name: 'cgst', title: 'CGST' },
+                { name: 'sgst', title: 'SGST' },
+                { name: 'gst', title: 'GST' },
+                { name: 'amount', title: 'Total Amount' },
             ],
             integratedSortingColumnExtensions: [
-                { columnName: 'price', compare: comparePrices },
+                { columnName: 'cgst', compare: comparePrices },
+                { columnName: 'sgst', compare: comparePrices },
+                { columnName: 'gst', compare: comparePrices },
+                { columnName: 'amount', compare: comparePrices },
             ],
             pageSizes: [5, 10, 15, 0],
         }
         this.loadRowsFromProps = this.loadRowsFromProps.bind(this)
-        this.commitChanges = this.commitChanges.bind(this);
     }
 
     componentDidMount() {
-        this.props.getProductList()
+        this.props.getSalesList()
     }
 
     loadRowsFromProps() {
-        if (this.props.products) {
-            const rows = this.props.products.map((product) => {
+        if (this.props.sales) {
+            console.log(this.props.sales)
+            const rows = this.props.sales.map((sale) => {
                 return {
-                    id: product.id,
-                    product: product.name,
-                    code: product.product_id,
-                    description: product.description,
-                    category: product.category,
-                    brand: product.brand,
-                    size: product.size,
-                    color: product.color,
-                    design: product.design,
-                    quality: product.quality,
-                    cp: product.cost_price,
-                    sp: product.selling_price,
-                    mrp: product.max_retail_price,
+                    invoice_no : null,
+                    date : null,
+                    customer : null,
+                    staff : null,
+                    store : null,
+                    cgst : null,
+                    sgst : null,
+                    gst : null,
+                    amount : null,
                 }
             })
             return rows
         }
         return []
-    }
-
-    commitChanges({ added, changed, deleted }) {
-        var rows = this.loadRowsFromProps();
-        if (added) {
-            console.log(added)
-            added = added[0]
-            const data = {
-                name: (added.product) ? (added.product) : null,
-                product_id: (added.code) ? (added.code) : null,
-                description: (added.description) ? (added.description) : null,
-                category: (added.category) ? (added.category) : null,
-                brand: (added.brand) ? (added.brand) : null,
-                size: (added.size) ? (added.size) : null,
-                color: (added.color) ? (added.color) : null,
-                design: (added.design) ? (added.design) : null,
-                quality: (added.quality) ? (added.quality) : null,
-                cost_price: (added.cp) ? (added.cp) : null,
-                selling_price: (added.sp) ? (added.sp) : null,
-                max_retail_price: (added.mrp) ? (added.mrp) : null,
-            }
-            this.props.createNewProduct(data)
-        }
-        if (changed) {
-            console.log(changed)
-            rows = rows.map((row, index) => {
-                if (changed[index]) {
-                    let data = Object.assign({},
-                        (changed[index].product) ? { name: changed[index].product } : undefined,
-                        (changed[index].code) ? { product_id: changed[index].code } : undefined,
-                        (changed[index].description) ? { description: changed[index].description } : undefined,
-                        (changed[index].category) ? { category: changed[index].category } : undefined,
-                        (changed[index].brand) ? { brand: changed[index].brand } : undefined,
-                        (changed[index].size) ? { size: changed[index].size } : undefined,
-                        (changed[index].color) ? { color: changed[index].color } : undefined,
-                        (changed[index].design) ? { design: changed[index].design } : undefined,
-                        (changed[index].quality) ? { quality: changed[index].quality } : undefined,
-                        (changed[index].cp) ? { cost_price: changed[index].cp } : undefined,
-                        (changed[index].sp) ? { selling_price: changed[index].sp } : undefined,
-                        (changed[index].mrp) ? { max_retail_price: changed[index].mrp } : undefined,
-                    )
-                    this.props.editProductDetail(row.id, data)
-                }
-            })
-        }
-        if (deleted) {
-            deleted = deleted.map((id) => rows[id].id)
-            deleted.forEach(element => {
-                this.props.deleteProduct(element)
-            });
-        }
     }
 
     render() {
@@ -147,7 +90,7 @@ class SalesTable extends React.PureComponent {
                 <Paper style={{ position: 'relative' }}>
                     <Grid rows={rows} columns={columns}>
                         <SortingState
-                            defaultSorting={[{ columnName: 'product', direction: 'asc' }]}
+                            defaultSorting={[{ columnName: 'invoice_no', direction: 'dsc' }]}
                         />
                         <IntegratedSorting columnExtensions={integratedSortingColumnExtensions} />
                         <FilteringState defaultFilters={[]} />
@@ -160,19 +103,10 @@ class SalesTable extends React.PureComponent {
                         <RowDetailState
                             defaultExpandedRowIds={[]}
                         />
-                        <EditingState
-                            onCommitChanges={this.commitChanges}
-                        />
                         <Table />
                         <TableHeaderRow showSortingControls />
                         <TableRowDetail
                             contentComponent={RowDetail}
-                        />
-                        <TableEditRow />
-                        <TableEditColumn
-                            showAddCommand
-                            showEditCommand
-                            showDeleteCommand
                         />
                         <TableFilterRow />
                         <PagingPanel
@@ -187,12 +121,8 @@ class SalesTable extends React.PureComponent {
 }
 
 export default connect(
-    state => ({ products: allProducts(state), loading: isLoadingAllProducts(state) }),
+    state => ({ sales: allSales(state), loading: isLoadingAllSales(state) }),
     {
-        getProductList: getProductList,
-        editProductDetail: editProductDetail,
-        createNewProduct: createNewProduct,
-        deleteProduct: deleteProduct,
-
+        getSalesList: getSalesList,
     }
 )(SalesTable);

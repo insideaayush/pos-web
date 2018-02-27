@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {connect} from 'react-redux'
 import { withStyles } from 'material-ui/styles';
 import Drawer from 'material-ui/Drawer';
 import AppBar from 'material-ui/AppBar';
@@ -14,6 +15,8 @@ import MenuIcon from 'material-ui-icons/Menu';
 import { Route } from 'react-router'
 import SideBarItems from './components/SideBarItems'
 import Products from './containers/Products'
+import Sales from './containers/Sales'
+import CashRegister from './containers/CashRegister'
 
 const drawerWidth = 240;
 
@@ -71,13 +74,13 @@ const routes = [
         path: "/",
         exact: true,
         sidebar: () => <div>home!</div>,
-        main: () => <h2>Home</h2>,
-        title: () => <span> Home</span>,
+        main: () => <CashRegister />,
+        title: () => <span> Add Sale</span>,
     },
     {
         path: "/sale/add",
         sidebar: () => <div>shoelaces!</div>,
-        main: () => <h2>/sale/add</h2>,
+        main: () => <CashRegister />,
         title: () => <span> Add Sale</span>,
     },
     {
@@ -89,13 +92,13 @@ const routes = [
     {
         path: "/products",
         sidebar: () => <div>bubblegum!</div>,
-        main: () => <Products />,
+        main: () => <Products edit={true} />,
         title: () => <span> Products</span>,
     },
     {
         path: "/sales",
         sidebar: () => <div>shoelaces!</div>,
-        main: () => <h2>sales</h2>,
+        main: () => <Sales />,
         title: () => <span> Sales</span>,
     },
     {
@@ -109,12 +112,6 @@ const routes = [
         sidebar: () => <div>shoelaces!</div>,
         main: () => <h2>settings</h2>,
         title: () => <span> Settings</span>,
-    },
-    {
-        path: "/logout",
-        sidebar: () => <div>shoelaces!</div>,
-        main: () => <h2>logout</h2>,
-        title: () => <span> ''</span>,
     }
 ];
 
@@ -126,10 +123,14 @@ class ResponsiveDrawer extends React.Component {
     handleDrawerToggle = () => {
         this.setState({ mobileOpen: !this.state.mobileOpen });
     };
+    handleLogout(){
+        this.props.dispatch({
+            type: '@@auth/HANDLE_LOGOUT'
+        })
+    }
 
     render() {
         const { classes, theme } = this.props;
-
         const drawer = (
             <div>
                 <div className={classes.drawerHeader}>
@@ -140,7 +141,7 @@ class ResponsiveDrawer extends React.Component {
                     </Toolbar>
                 </div>
                 <Divider />
-                <SideBarItems />             
+                <SideBarItems handleLogout={this.handleLogout.bind(this)} />             
             </div>
         );
 
@@ -217,4 +218,8 @@ ResponsiveDrawer.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(ResponsiveDrawer);
+export default connect(
+    null,
+    // state => ({ sales: allSales(state), loading: isLoadingAllSales(state) }),
+    null
+)(withStyles(styles, { withTheme: true })(ResponsiveDrawer));

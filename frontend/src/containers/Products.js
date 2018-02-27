@@ -19,7 +19,6 @@ import {
     TableEditColumn,
 } from '@devexpress/dx-react-grid-material-ui'
 import { CircularProgress } from 'material-ui/Progress';
-import Typography from 'material-ui/Typography';
 
 const comparePrices = (a,b) => {
     const _a = parseFloat(a)
@@ -38,9 +37,14 @@ class ProductTable extends React.PureComponent {
     constructor(props) {
         super(props)
         this.state = {
-            columns: [
-                { name: 'product', title: 'Product' },
+            columnsSale: [
                 { name: 'code', title: 'Product Code' },
+                { name: 'product', title: 'Product' },
+                { name: 'mrp', title: 'MRP' },
+            ],
+            columns: [
+                { name: 'code', title: 'Product Code' },
+                { name: 'product', title: 'Product' },
                 { name: 'category', title: 'Category' },
                 { name: 'brand', title: 'Brand' },
                 { name: 'size', title: 'Size' },
@@ -52,7 +56,9 @@ class ProductTable extends React.PureComponent {
                 { name: 'mrp', title: 'MRP' },
             ],
             integratedSortingColumnExtensions: [
-                { columnName: 'price', compare: comparePrices },
+                { columnName: 'cp', compare: comparePrices },
+                { columnName: 'sp', compare: comparePrices },
+                { columnName: 'mrp', compare: comparePrices },
             ],
             pageSizes: [5, 10, 15, 0],
         }
@@ -91,7 +97,6 @@ class ProductTable extends React.PureComponent {
     commitChanges({ added, changed, deleted }) {
         var rows  = this.loadRowsFromProps();
         if (added) {
-            console.log(added)
             added = added[0]
             const data = {
                 name : (added.product) ? (added.product) : null,
@@ -110,7 +115,6 @@ class ProductTable extends React.PureComponent {
             this.props.createNewProduct(data)
         }
         if (changed) {
-            console.log(changed)
             rows = rows.map((row, index) =>{
                 if(changed[index]){
                     let data = Object.assign({}, 
@@ -129,6 +133,7 @@ class ProductTable extends React.PureComponent {
                     )
                     this.props.editProductDetail(row.id,data)
                 }
+                return row
             })
         }
         if (deleted) {
@@ -140,12 +145,12 @@ class ProductTable extends React.PureComponent {
     }
 
     render() {
-        const { columns, integratedSortingColumnExtensions, pageSizes } = this.state
+        const { columnsSale, columns, integratedSortingColumnExtensions, pageSizes } = this.state
         const rows = this.loadRowsFromProps()
         return (
             <div>
                 <Paper style={{ position: 'relative' }}>
-                    <Grid rows={rows} columns={columns}>
+                    <Grid rows={rows} columns={this.props.edit ? columns : columnsSale}>
                         <SortingState
                             defaultSorting={[{ columnName: 'product', direction: 'asc' }]}
                         />
@@ -160,20 +165,29 @@ class ProductTable extends React.PureComponent {
                         <RowDetailState
                             defaultExpandedRowIds={[]}
                         />
-                        <EditingState
-                            onCommitChanges={this.commitChanges}
-                        />
+                        {(this.props.edit) ?
+                            <EditingState
+                                onCommitChanges={this.commitChanges}
+                            />
+                            : null
+                        }
                         <Table/>
                         <TableHeaderRow showSortingControls />
                         <TableRowDetail
                             contentComponent={RowDetail}
                         />
-                        <TableEditRow />
-                        <TableEditColumn
-                            showAddCommand
-                            showEditCommand
-                            showDeleteCommand
-                        />
+                        {(this.props.edit) ? 
+                            <TableEditRow />
+                            : null
+                        }
+                        {(this.props.edit) ? 
+                            <TableEditColumn
+                                showAddCommand
+                                showEditCommand
+                                showDeleteCommand
+                            />
+                            : null
+                        }
                         <TableFilterRow />
                         <PagingPanel
                             pageSizes={pageSizes}
