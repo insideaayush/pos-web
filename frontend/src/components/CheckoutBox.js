@@ -1,14 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import Paper from 'material-ui/Paper'
-import { withStyles } from 'material-ui/styles';
-import Typography from 'material-ui/Typography';
-
 import {
     Grid, Table, TableHeaderRow
 } from '@devexpress/dx-react-grid-material-ui'
+import Paper from 'material-ui/Paper'
+import {TableCell} from 'material-ui/Table'
+import { withStyles } from 'material-ui/styles';
+import Typography from 'material-ui/Typography';
 import { CircularProgress } from 'material-ui/Progress';
+import TextField from 'material-ui/TextField';
 
+// Utils
 const comparePrices = (a, b) => {
     const _a = parseFloat(a)
     const _b = parseFloat(b)
@@ -21,13 +23,55 @@ const comparePrices = (a, b) => {
 const styles = theme => ({
     amountDesc: {
         marginTop: theme.spacing.unit * 2,
+        marginRight: theme.spacing.unit * 2,
+        flex: 1,
+        textAlign: 'right'
+    },
+    leftCol:{
+        display: 'inline-block',
+        flexDirection: 'row',
+        flexGrow: 1,
+        textAlign: 'left',
+    },
+    rightCol:{
+        marginLeft: 30,
+        display: 'inline-block',
+        flexDirection: 'row',
+        flexGrow: 1,
         textAlign: 'right',
     },
     paper: {
-        padding: theme.spacing.unit * 2,
+        padding: theme.spacing.unit,
         color: theme.palette.text.secondary,
     },
+    textField: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: 200,
+    },
 })
+
+const QuantityCell = (props) => {
+    return (
+        <TableCell>
+            <TextField
+                name={'quantity-' + props.row.id}
+                defaultValue={props.row.quantity.toString()}
+                onBlur={props.change_text_field}
+            />
+        </TableCell>
+    )
+}
+
+const Cell = (props) => {
+    if (props.column.name === 'quantity') {
+        return <QuantityCell {...props} />;
+    }
+    var child_props = {...props}
+    delete child_props.change_text_field
+    return <Table.Cell {...child_props} />;
+};
+
 
 class CheckoutBox extends React.PureComponent {
     constructor(props) {
@@ -38,79 +82,49 @@ class CheckoutBox extends React.PureComponent {
                 { name: 'product', title: 'Product' },
                 { name: 'quantity', title: 'Quantity' },
                 { name: 'amount', title: 'Amount' },
-            ],
-            integratedSortingColumnExtensions: [
-                { columnName: 'quantity', compare: comparePrices },
-                { columnName: 'amount', compare: comparePrices },
-            ],
-            pageSizes: [5, 10, 15, 0],
+            ]
         }
-        this.loadRowsFromProps = this.loadRowsFromProps.bind(this)
+        this.handleQuantity = this.handleQuantity.bind(this)
     }
 
-    componentDidMount() {
-    }
+    handleQuantity = event => {
+        const row_id =  event.target.name.slice(9)
+        var value = event.target.value
+        value  = (value == '') ? 0 : value
+        value = Number(value).toString();
+        this.props.handleQuantity(row_id, value)
+    };
 
-    loadRowsFromProps() {
-        if (this.props.products) {
-            const rows = this.props.products.map((product) => {
-                return {
-                    id: product.id,
-                    product: product.name,
-                    code: product.product_id,
-                    description: product.description,
-                    category: product.category,
-                    brand: product.brand,
-                    size: product.size,
-                    color: product.color,
-                    design: product.design,
-                    quality: product.quality,
-                    cp: product.cost_price,
-                    sp: product.selling_price,
-                    mrp: product.max_retail_price,
-                }
-            })
-            return rows
-        }
-        return []
-    }
 
     render() {
-        const { columns, pageSizes } = this.state
-        const {classes} = this.props
-        // const rows = this.loadRowsFromProps()
-        const rows = [
-            {
-                id: 1,
-                code: '123141',
-                product: 'Iphone',
-                amount: 999,
-                quantity: 1,
-            }
-        ]
+        const { columns, pageSizes } = this.state;
+        const { rows, tax, amount, total } = this.props;
+        const { classes } = this.props;
+
         return (
             <div>
                 <Paper className={classes.paper} style={{ position: 'relative' }}>
                     <Grid rows={rows} columns={columns}>
-                        <Table />
+                        <Table
+                            cellComponent={(props) => <Cell change_text_field={this.handleQuantity} {...props}/>}
+                        />
                         <TableHeaderRow />
                     </Grid>
                     <div className={classes.amountDesc}>
-                        <Typography>
-                            Amount: 11000
-                            </Typography>
-                        <Typography>
-                            Tax (GST): 500
-                            </Typography>
-                        <Typography>
-                            CGST: 250
-                            </Typography>
-                        <Typography>
-                            SGST: 250
-                            </Typography>
-                        <Typography>
-                            Total Amount: 13000
-                            </Typography>
+                        <div className={classes.leftCol}>
+                            <Typography variant="button" align='left' >Amount: </Typography>
+                            <Typography variant="button" align='left' > Tax (GST): </Typography>
+                            <Typography variant="button" align='left' > CGST: </Typography>
+                            <Typography variant="button" align='left' > SGST: </Typography>
+                            <Typography variant="button" align='left' > Total Amount: </Typography>
+                        </div>
+                        <div className={classes.rightCol}>
+                            <Typography variant="button" align='right'>{amount}</Typography>
+                            <Typography variant="button" align='right'>{tax}</Typography>
+                            <Typography variant="button" align='right'>{tax/2}</Typography>
+                            <Typography variant="button" align='right'>{tax/2}</Typography>
+                            <Typography variant="button" align='right'>{total}</Typography>
+                        </div>
                     </div>
                     {this.props.loading && <CircularProgress className="loader" />}
                 </Paper>

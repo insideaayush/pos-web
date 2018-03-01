@@ -162,9 +162,11 @@ class ProductTable extends React.PureComponent {
                             defaultPageSize={5}
                         />
                         <IntegratedPaging />
-                        <RowDetailState
-                            defaultExpandedRowIds={[]}
-                        />
+                        {(this.props.edit) ?
+                            <RowDetailState
+                                defaultExpandedRowIds={[]}
+                            /> : null
+                        }
                         {(this.props.edit) ?
                             <EditingState
                                 onCommitChanges={this.commitChanges}
@@ -173,9 +175,12 @@ class ProductTable extends React.PureComponent {
                         }
                         <Table/>
                         <TableHeaderRow showSortingControls />
-                        <TableRowDetail
-                            contentComponent={RowDetail}
-                        />
+                        {(this.props.edit) ?
+                            <TableRowDetail
+                                contentComponent={RowDetail}
+                            />
+                            : null
+                        }
                         {(this.props.edit) ? 
                             <TableEditRow />
                             : null

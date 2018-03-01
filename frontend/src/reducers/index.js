@@ -3,12 +3,14 @@ import { routerReducer } from 'react-router-redux'
 import auth, * as fromAuth from './auth'
 import products, * as fromProducts from './products'
 import sales, * as fromSales from './sales'
+import customers, * as fromCustomers from './customers'
 
 export default combineReducers({
     auth: auth,
     router: routerReducer,
     products: products,
     sales: sales,
+    customers: customers,
 })
 
 // Auth Helper Functions
@@ -46,3 +48,10 @@ export const allSales =
 
 export const isLoadingAllSales =
     state => fromSales.isLoadingAllSales(state.sales)
+
+//Products Helper Function
+export const allCustomers =
+    state => fromCustomers.allCustomers(state.customers)
+
+export const isLoadingAllCustomers =
+    state => fromCustomers.isLoadingAllCustomers(state.customers)

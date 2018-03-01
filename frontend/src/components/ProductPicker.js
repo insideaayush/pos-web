@@ -1,8 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux'
-import { getSalesList } from '../actions/sales'
-import { allSales, isLoadingAllSales } from '../reducers'
 import Paper from 'material-ui/Paper'
+import { TableRow, TableCell } from 'material-ui/Table'
 import {
     SortingState,
     IntegratedSorting,
@@ -11,12 +9,15 @@ import {
     PagingState,
     IntegratedPaging,
     RowDetailState,
+    EditingState,
 } from '@devexpress/dx-react-grid';
-
 import {
-    Grid, Table, TableHeaderRow, TableFilterRow, PagingPanel, TableRowDetail,
+    Grid, Table, TableHeaderRow, TableFilterRow, PagingPanel, TableRowDetail, TableEditRow,
+    TableEditColumn,
 } from '@devexpress/dx-react-grid-material-ui'
 import { CircularProgress } from 'material-ui/Progress';
+import Button from 'material-ui/Button';
+import AddIcon from 'material-ui-icons/Add';
 
 const comparePrices = (a, b) => {
     const _a = parseFloat(a)
@@ -27,30 +28,43 @@ const comparePrices = (a, b) => {
     return (_a < _b) ? -1 : 1
 }
 
-const RowDetail = ({ row }) => (
-    <div><strong>Description: </strong></div>
-);
+const AddCell = (props) => {
+    return (
+        <TableCell>
+            <Button mini aria-label="add">
+                <AddIcon /> Add
+            </Button>
+        </TableCell>
+    )
+}
 
-class SalesTable extends React.PureComponent {
+const Cell = (props) => {
+    if (props.column.name === 'add') {
+        return <AddCell {...props} />;
+    }
+    return <Table.Cell {...props} />;
+};
+
+const Row = (props) => {
+    return (
+        <TableRow  onClick={() => props.add(props.row) } key={props.tableRow.key} row={props.row} children={props.children} />
+    ) 
+}
+
+class ProductPicker extends React.PureComponent {
     constructor(props) {
         super(props)
         this.state = {
             columns: [
-                { name: 'invoice_no', title: 'Invoice' },
-                { name: 'date', title: 'Date' },
-                { name: 'customer', title: 'Customer' },
-                { name: 'staff', title: 'Staff' },
-                { name: 'store', title: 'Store' },
-                { name: 'cgst', title: 'CGST' },
-                { name: 'sgst', title: 'SGST' },
-                { name: 'gst', title: 'GST' },
-                { name: 'amount', title: 'Total Amount' },
+                { name: 'code', title: 'Product Code' },
+                { name: 'product', title: 'Product' },
+                { name: 'mrp', title: 'MRP' },
+                { name: 'add', title: 'Action' },
             ],
             integratedSortingColumnExtensions: [
-                { columnName: 'cgst', compare: comparePrices },
-                { columnName: 'sgst', compare: comparePrices },
-                { columnName: 'gst', compare: comparePrices },
-                { columnName: 'amount', compare: comparePrices },
+                { columnName: 'cp', compare: comparePrices },
+                { columnName: 'sp', compare: comparePrices },
+                { columnName: 'mrp', compare: comparePrices },
             ],
             pageSizes: [5, 10, 15, 0],
         }
@@ -58,23 +72,17 @@ class SalesTable extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.props.getSalesList()
+        this.props.getProductList()
     }
 
     loadRowsFromProps() {
-        if (this.props.sales) {
-            console.log(this.props.sales)
-            const rows = this.props.sales.map((sale) => {
+        if (this.props.products) {
+            const rows = this.props.products.map((product) => {
                 return {
-                    invoice_no : null,
-                    date : null,
-                    customer : null,
-                    staff : null,
-                    store : null,
-                    cgst : null,
-                    sgst : null,
-                    gst : null,
-                    amount : null,
+                    id: product.id,
+                    product: product.name,
+                    code: product.product_id,
+                    mrp: product.max_retail_price,
                 }
             })
             return rows
@@ -90,7 +98,7 @@ class SalesTable extends React.PureComponent {
                 <Paper style={{ position: 'relative' }}>
                     <Grid rows={rows} columns={columns}>
                         <SortingState
-                            defaultSorting={[{ columnName: 'invoice_no', direction: 'desc' }]}
+                            defaultSorting={[{ columnName: 'product', direction: 'asc' }]}
                         />
                         <IntegratedSorting columnExtensions={integratedSortingColumnExtensions} />
                         <FilteringState defaultFilters={[]} />
@@ -100,14 +108,8 @@ class SalesTable extends React.PureComponent {
                             defaultPageSize={5}
                         />
                         <IntegratedPaging />
-                        <RowDetailState
-                            defaultExpandedRowIds={[]}
-                        />
-                        <Table />
+                        <Table cellComponent={(props) => <Cell {...props}/>} rowComponent={(props) => <Row add={this.props.addToCheckout} {...props} />}/>
                         <TableHeaderRow showSortingControls />
-                        <TableRowDetail
-                            contentComponent={RowDetail}
-                        />
                         <TableFilterRow />
                         <PagingPanel
                             pageSizes={pageSizes}
@@ -120,9 +122,4 @@ class SalesTable extends React.PureComponent {
     }
 }
 
-export default connect(
-    state => ({ sales: allSales(state), loading: isLoadingAllSales(state) }),
-    {
-        getSalesList: getSalesList,
-    }
-)(SalesTable);
+export default ProductPicker
