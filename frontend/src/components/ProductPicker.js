@@ -8,12 +8,9 @@ import {
     IntegratedFiltering,
     PagingState,
     IntegratedPaging,
-    RowDetailState,
-    EditingState,
 } from '@devexpress/dx-react-grid';
 import {
-    Grid, Table, TableHeaderRow, TableFilterRow, PagingPanel, TableRowDetail, TableEditRow,
-    TableEditColumn,
+    Grid, Table, TableHeaderRow, TableFilterRow, PagingPanel,
 } from '@devexpress/dx-react-grid-material-ui'
 import { CircularProgress } from 'material-ui/Progress';
 import Button from 'material-ui/Button';

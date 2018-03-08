@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import {
     Grid, Table, TableHeaderRow
 } from '@devexpress/dx-react-grid-material-ui'
-import Paper from 'material-ui/Paper'
 import {TableCell} from 'material-ui/Table'
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
@@ -11,14 +10,14 @@ import { CircularProgress } from 'material-ui/Progress';
 import TextField from 'material-ui/TextField';
 
 // Utils
-const comparePrices = (a, b) => {
-    const _a = parseFloat(a)
-    const _b = parseFloat(b)
-    if (_a === _b) {
-        return 0
-    }
-    return (_a < _b) ? -1 : 1
-}
+// const comparePrices = (a, b) => {
+//     const _a = parseFloat(a)
+//     const _b = parseFloat(b)
+//     if (_a === _b) {
+//         return 0
+//     }
+//     return (_a < _b) ? -1 : 1
+// }
 
 const styles = theme => ({
     amountDesc: {
@@ -90,14 +89,14 @@ class CheckoutBox extends React.PureComponent {
     handleQuantity = event => {
         const row_id =  event.target.name.slice(9)
         var value = event.target.value
-        value  = (value == '') ? 0 : value
+        value  = (value === '') ? 0 : value
         value = Number(value).toString();
         this.props.handleQuantity(row_id, value)
     };
 
 
     render() {
-        const { columns, pageSizes } = this.state;
+        const { columns } = this.state;
         const { rows, tax, amount, total } = this.props;
         const { classes } = this.props;
 
