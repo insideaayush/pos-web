@@ -96,7 +96,7 @@ class Product(models.Model):
     cost_price = models.DecimalField(null=True, default=None, max_digits=10,decimal_places=3)
     max_retail_price = models.DecimalField(null=True, default=None, max_digits=10,decimal_places=3)
     selling_price = models.DecimalField(null=True, default=None, max_digits=10,decimal_places=3)
-    category = models.CharField(max_length=200, unique=True)
+    category = models.CharField(max_length=200)
     brand = models.CharField(null=True, max_length=200)
     size = models.CharField(null=True, max_length=200)
     color = models.CharField(null=True, max_length=200)

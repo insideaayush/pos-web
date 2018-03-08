@@ -3,6 +3,7 @@ from .models import *
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from v1.serializers import *
+from django_filters.rest_framework import DjangoFilterBackend
 
 @api_view(['GET'])
 def api_root(request, format=None):
@@ -29,6 +30,8 @@ class StaffViewSet(viewsets.ModelViewSet):
 class CustomerViewset(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class =CustomerSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('mobile', 'name')
 
 class StoreViewset(viewsets.ModelViewSet):
     queryset = Store.objects.all()

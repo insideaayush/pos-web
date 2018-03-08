@@ -103,7 +103,7 @@ class CheckoutBox extends React.PureComponent {
 
         return (
             <div>
-                <Paper className={classes.paper} style={{ position: 'relative' }}>
+                {/* <Paper className={classes.paper} style={{ position: 'relative' }}> */}
                     <Grid rows={rows} columns={columns}>
                         <Table
                             cellComponent={(props) => <Cell change_text_field={this.handleQuantity} {...props}/>}
@@ -127,7 +127,7 @@ class CheckoutBox extends React.PureComponent {
                         </div>
                     </div>
                     {this.props.loading && <CircularProgress className="loader" />}
-                </Paper>
+                {/* </Paper> */}
             </div>
         )
     }

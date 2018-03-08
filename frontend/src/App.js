@@ -11,12 +11,16 @@ import Hidden from 'material-ui/Hidden';
 import Divider from 'material-ui/Divider';
 import MenuIcon from 'material-ui-icons/Menu';
 
+import {getUserId, getUser, isAuthenticated} from './reducers'
+import {getLoggedInUser} from './actions/auth'
+
 // In-App Routing
 import { Route } from 'react-router'
 import SideBarItems from './components/SideBarItems'
 import Products from './containers/Products'
 import Sales from './containers/Sales'
 import CashRegister from './containers/CashRegister'
+import Settings from './containers/Settings'
 
 const drawerWidth = 240;
 
@@ -27,6 +31,7 @@ const styles = theme => ({
         marginTop: theme.spacing.unit * 0,
         zIndex: 1,
         overflow: 'hidden',
+        flexGrow: 1,
     },
     appFrame: {
         position: 'relative',
@@ -67,6 +72,12 @@ const styles = theme => ({
             marginTop: 64,
         },
     },
+    title: {
+        // flex: 8,
+    },
+    flex: {
+        flex: 2,
+    }
 });
 
 const routes = [
@@ -110,7 +121,7 @@ const routes = [
     {
         path: "/settings",
         sidebar: () => <div>shoelaces!</div>,
-        main: () => <h2>settings</h2>,
+        main: () => <Settings />,
         title: () => <span> Settings</span>,
     }
 ];
@@ -120,14 +131,20 @@ class ResponsiveDrawer extends React.Component {
         mobileOpen: false,
     };
 
+    componentDidMount(){
+        if(this.props.user_id){
+            this.props.getLoggedInUser(this.props.user_id)
+        }
+        // console.log(this.props)
+    }
+    
+    componentDidUpdate(){
+        // console.log(this.props)
+    }
+
     handleDrawerToggle = () => {
         this.setState({ mobileOpen: !this.state.mobileOpen });
     };
-    handleLogout(){
-        this.props.dispatch({
-            type: '@@auth/HANDLE_LOGOUT'
-        })
-    }
 
     render() {
         const { classes, theme } = this.props;
@@ -141,7 +158,7 @@ class ResponsiveDrawer extends React.Component {
                     </Toolbar>
                 </div>
                 <Divider />
-                <SideBarItems handleLogout={this.handleLogout.bind(this)} />             
+                <SideBarItems handleLogout={this.props.handleLogout.bind(this)} />             
             </div>
         );
 
@@ -158,7 +175,7 @@ class ResponsiveDrawer extends React.Component {
                             >
                                 <MenuIcon />
                             </IconButton>
-                            <Typography variant="title" color="inherit" noWrap>
+                            <Typography variant="title" color="inherit" noWrap className={classes.flex}>
                                 {routes.map((route, index) => (
                                     <Route
                                         key={index}
@@ -168,6 +185,17 @@ class ResponsiveDrawer extends React.Component {
                                     />
                                 ))}
                             </Typography>
+                            <div>
+                                <Typography variant="title" color="inherit">
+                                    Hi, {
+                                        (this.props.user) ?
+                                        this.props.user.first_name : null
+                                    }
+                                </Typography>
+                                <Typography variant="subheading" color="inherit" align='right'>
+                                    Sales Person
+                                </Typography>
+                            </div>
                         </Toolbar>
                     </AppBar>
                     <Hidden mdUp>
@@ -186,17 +214,17 @@ class ResponsiveDrawer extends React.Component {
                             {drawer}
                         </Drawer>
                     </Hidden>
-                    <Hidden smDown implementation="css">
-                        <Drawer
-                            variant="permanent"
-                            open
-                            classes={{
-                                paper: classes.drawerPaper,
-                            }}
-                        >
-                            {drawer}
-                        </Drawer>
-                    </Hidden>
+                        <Hidden smDown implementation="css">
+                            <Drawer
+                                variant="permanent"
+                                open
+                                classes={{
+                                    paper: classes.drawerPaper,
+                                }}
+                            >
+                                {drawer}
+                            </Drawer>
+                        </Hidden>
                     <main className={classes.content}>
                         {routes.map((route, index) => (
                             <Route
@@ -218,8 +246,21 @@ ResponsiveDrawer.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
-export default connect(
-    null,
-    // state => ({ sales: allSales(state), loading: isLoadingAllSales(state) }),
-    null
-)(withStyles(styles, { withTheme: true })(ResponsiveDrawer));
+const mapStateToProps = (state) => ({
+    user_id: getUserId(state),
+    user: getUser(state),
+    isAuthenticated: isAuthenticated(state)
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    getLoggedInUser: (id) => {
+        dispatch(getLoggedInUser(id))
+    },
+    handleLogout: () => {
+        dispatch({
+            type: '@@auth/HANDLE_LOGOUT'
+        })
+    }
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles, { withTheme: true })(ResponsiveDrawer));

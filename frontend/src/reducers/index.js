@@ -26,6 +26,10 @@ export const isRefreshTokenExpired =
     state => fromAuth.isRefreshTokenExpired(state.auth)
 export const authErrors =
     state => fromAuth.errors(state.auth)
+export const getUser = 
+    state => fromAuth.getUser(state.auth)
+export const getUserId =
+    state => fromAuth.getUserId(state.auth)
 
 
 export function withAuth(headers = {}) {
@@ -49,9 +53,15 @@ export const allSales =
 export const isLoadingAllSales =
     state => fromSales.isLoadingAllSales(state.sales)
 
-//Products Helper Function
+//Customers Helper Function
 export const allCustomers =
     state => fromCustomers.allCustomers(state.customers)
 
 export const isLoadingAllCustomers =
     state => fromCustomers.isLoadingAllCustomers(state.customers)
+
+export const currentCustomer =
+    state => fromCustomers.currentCustomer(state.customers)
+
+export const isRetrievingCustomer =
+    state => fromCustomers.isRetrievingCustomer(state.customers)

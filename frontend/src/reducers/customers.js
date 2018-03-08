@@ -3,6 +3,8 @@ import * as customers from '../actions/customers'
 const initialState = {
     customers: [],
     loadingAllCustomers: false,
+    currentCustomer: null,
+    isRetrievingCustomer: false,
 }
 
 export default (state = initialState, action) => {
@@ -74,6 +76,27 @@ export default (state = initialState, action) => {
                 ...state,
                 loadingAllCustomers: false,
             }
+        case customers.RETRIEVE_CUSTOMER_REQUEST:
+            return {
+                ...state,
+                retrievingCutomer: true,
+            }
+        case customers.RETRIEVE_CUSTOMER_SUCCESS:
+            return {
+                ...state,
+                customer: action.payload[0],
+                retrievingCutomer: false,
+            }
+        case customers.RETRIEVE_CUSTOMER_FAILURE:
+            return {
+                ...state,
+                retrievingCutomer: false, 
+            }
+        case 'CLEAR__CURRENT_CUSTOMER_DETAILS' :
+            return {
+                ...state,
+                currentCustomer: undefined,
+            }
 
         default:
             return state
@@ -82,3 +105,5 @@ export default (state = initialState, action) => {
 
 export const allCustomers = (state) => state.customers
 export const isLoadingAllCustomers = (state) => state.loadingAllCustomers
+export const currentCustomer = (state) => state.customer
+export const isRetrievingCustomer = (state) => state.retrievingCutomer

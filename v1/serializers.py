@@ -68,6 +68,7 @@ def get_next_invoice_no(store_code):
 
 class SaleSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     products_in_sale = ProductInSaleSerializer(many=True)
+    transaction = TransactionSerializer()
     class Meta:
         model = Sale
         fields = (

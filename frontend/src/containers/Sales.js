@@ -27,9 +27,14 @@ const comparePrices = (a, b) => {
     return (_a < _b) ? -1 : 1
 }
 
-const RowDetail = ({ row }) => (
-    <div><strong>Description: </strong></div>
-);
+const RowDetail = row => {
+    console.log(row)
+    return (
+        <div>
+            {row.products_in_sale}
+        </div>
+    )
+}
 
 class SalesTable extends React.PureComponent {
     constructor(props) {
@@ -63,18 +68,19 @@ class SalesTable extends React.PureComponent {
 
     loadRowsFromProps() {
         if (this.props.sales) {
-            console.log(this.props.sales)
             const rows = this.props.sales.map((sale) => {
                 return {
-                    invoice_no : null,
-                    date : null,
-                    customer : null,
-                    staff : null,
-                    store : null,
-                    cgst : null,
-                    sgst : null,
-                    gst : null,
-                    amount : null,
+                    invoice_no : sale.invoice_id,
+                    date : sale.created_on,
+                    customer : sale.customer,
+                    staff : sale.staff,
+                    store : sale.store,
+                    cgst : sale.total_tax/2,
+                    sgst: sale.total_tax / 2,
+                    gst: sale.total_tax,
+                    amount : sale.total_amount,
+                    products_in_sale: sale.products_in_sale,
+                    transaction: sale.transaction
                 }
             })
             return rows
@@ -120,9 +126,15 @@ class SalesTable extends React.PureComponent {
     }
 }
 
-export default connect(
-    state => ({ sales: allSales(state), loading: isLoadingAllSales(state) }),
-    {
-        getSalesList: getSalesList,
-    }
-)(SalesTable);
+const mapStateToProps = (state) => ({
+    sales: allSales(state),
+    loading: isLoadingAllSales(state)
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    getSalesList: () => {
+        dispatch(getSalesList())
+    },
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(SalesTable);

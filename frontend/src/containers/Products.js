@@ -205,13 +205,24 @@ class ProductTable extends React.PureComponent {
     }
 }
 
-export default connect(
-    state => ({ products: allProducts(state), loading: isLoadingAllProducts(state) }),
-    { 
-        getProductList: getProductList, 
-        editProductDetail: editProductDetail, 
-        createNewProduct: createNewProduct,
-        deleteProduct: deleteProduct,
-    
-    }
-)(ProductTable);
+const mapStateToProps = (state) => ({
+    products: allProducts(state),
+    loading: isLoadingAllProducts(state)
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    getProductList: () => {
+        dispatch(getProductList())
+    },
+    editProductDetail: (id, product) => {
+        dispatch(editProductDetail(id, product))
+    },
+    createNewProduct: (product) => {
+        dispatch(createNewProduct(product))
+    },
+    deleteProduct: (product) => {
+        dispatch(deleteProduct(product))
+    },
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductTable);

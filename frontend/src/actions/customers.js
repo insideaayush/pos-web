@@ -12,6 +12,9 @@ export const PATCH_CUSTOMER_FAILURE = '@@customers/PATCH_CUSTOMER_FAILURE';
 export const DELETE_CUSTOMER_REQUEST = '@@customers/DELETE_CUSTOMER_REQUEST';
 export const DELETE_CUSTOMER_SUCCESS = '@@customers/DELETE_CUSTOMER_SUCCESS';
 export const DELETE_CUSTOMER_FAILURE = '@@customers/DELETE_CUSTOMER_FAILURE';
+export const RETRIEVE_CUSTOMER_REQUEST = '@@customers/RETRIEVE_CUSTOMER_REQUEST';
+export const RETRIEVE_CUSTOMER_SUCCESS = '@@customers/RETRIEVE_CUSTOMER_SUCCESS';
+export const RETRIEVE_CUSTOMER_FAILURE = '@@customers/RETRIEVE_CUSTOMER_FAILURE';
 
 export const getCustomersList = () => ({
     [RSAA]: {
@@ -21,6 +24,18 @@ export const getCustomersList = () => ({
         headers: withAuth({ 'Content-Type': 'application/json' }),
         types: [
             GET_ALL_CUSTOMERS_REQUEST, GET_ALL_CUSTOMERS_SUCCESS, GET_ALL_CUSTOMERS_FAILURE
+        ]
+    }
+})
+
+export const retrieveCustomer = (mobile) => ({
+    [RSAA]: {
+        endpoint: '/api/v1/customers/?mobile=' + mobile,
+        method: 'GET',
+        // body: JSON.stringify({ message: message }),
+        headers: withAuth({ 'Content-Type': 'application/json' }),
+        types: [
+            RETRIEVE_CUSTOMER_REQUEST, RETRIEVE_CUSTOMER_SUCCESS, RETRIEVE_CUSTOMER_FAILURE
         ]
     }
 })
