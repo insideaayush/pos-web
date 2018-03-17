@@ -115,7 +115,7 @@ class CheckoutBox extends React.PureComponent {
                             <Typography variant="button" align='left' > Tax (GST): </Typography>
                             <Typography variant="button" align='left' > CGST: </Typography>
                             <Typography variant="button" align='left' > SGST: </Typography>
-                            <Typography variant="button" align='left' > Total Amount: </Typography>
+                            <Typography variant="button" align='left' > Net Payable: </Typography>
                         </div>
                         <div className={classes.rightCol}>
                             <Typography variant="button" align='right'>{amount}</Typography>

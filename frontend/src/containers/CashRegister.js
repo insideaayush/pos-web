@@ -1,16 +1,27 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { getProductList } from '../actions/products'
-import { retrieveCustomer } from '../actions/customers'
-import { allProducts, isLoadingAllProducts, currentCustomer, isRetrievingCustomer } from '../reducers'
+import { retrieveCustomer, clearCustomerDetails } from '../actions/customers'
+import { addSale, resetPostSaleValues } from '../actions/sales'
+import {
+    getUser, 
+    defaultStore, 
+    allProducts, 
+    isLoadingAllProducts, 
+    currentCustomer, 
+    isRetrievingCustomer, 
+    isSaleInProgress,
+    isSaleSuccess,
+    isSaleRejected,
+    saleFailError, } from '../reducers'
 import { withStyles } from 'material-ui/styles';
-
 import CheckoutBox from '../components/CheckoutBox'
 import ProductPicker from '../components/ProductPicker'
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
+import SaleProgress from '../components/SaleProcess'
 
 const styles = theme => ({
     root: {
@@ -29,27 +40,21 @@ class CashRegister extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            name: '',
-            mobile: '',
-            gender: '',
             rows: [
             ],
             amount: 0,
             tax: 0,
             total: 0,
-            payment: {
-                cash: 0,
-                card: 0,
-                wallet: 0,
-                upi: 0,
-            },
+            openSaleProgress: false,
             tax_slab: [5, 12, 18, 28]
         }
         this.addToCheckout = this.addToCheckout.bind(this) 
         this.handleQuantity = this.handleQuantity.bind(this) 
         this.retrieveCustomer = this.retrieveCustomer.bind(this) 
         this.handleChange = this.handleChange.bind(this)
-        this.handleChange = this.handleChange.bind(this)
+        this.addSale = this.addSale.bind(this)
+        this.openSaleDialog = this.openSaleDialog.bind(this)
+        this.closeSaleDialog = this.closeSaleDialog.bind(this)
     }
 
     retrieveCustomer = event => {
@@ -58,16 +63,18 @@ class CashRegister extends React.Component{
 
     componentDidMount(){
         this.props.clearCustomerDetails()
+        this.props.resetPostSaleValues()
     }
 
-    componentDidUpdate(){
-        if(this.props.currentCustomer){
+    componentDidUpdate(prevProps, prevState){
+        if(this.props.currentCustomer && prevProps.currentCustomer !== this.props.currentCustomer){
             this.mobileField.value = this.props.currentCustomer.mobile
             this.nameField.click()
             this.nameField.value = this.props.currentCustomer.name
             this.genderField.value = this.props.currentCustomer.gender
             this.genderField.click()
         }
+
         this.cashField.value = this.state.total
         this.cardField.value = 0
         this.walletField.value = 0
@@ -159,13 +166,96 @@ class CashRegister extends React.Component{
     }
 
     addSale(){
+        //  Validate that store is given 
+        if (this.props.defaultStore === null){
+            alert('Set default store in settings first, then Try again!')
+            return;
+        }
+        this.props.resetPostSaleValues() 
+        
+        const cash = parseFloat(this.cashField.value)
+        const card = parseFloat(this.cardField.value)
+        const wallet = parseFloat(this.walletField.value)
+        const upi = parseFloat(this.upiField.value)
+        let all_payments = [
+            (cash > 0) ? {
+                method: 'CSH',
+                amount: cash,
+            } : undefined,
+            (card > 0) ? {
+                method: 'CRD',
+                amount: card,
+            } : undefined,
+            (wallet > 0) ? {
+                method: 'WAL',
+                amount: wallet,
+            } : undefined,
+            (upi > 0) ? {
+                method: 'UPI',
+                amount: upi,
+            } : undefined,
+        ]
+        
+        let data = {
+            channel: 'IN',
+            customer: (this.props.currentCustomer) ? {id: this.props.currentCustomer.id} : {
+                mobile: this.mobileField.value,
+                name: this.nameField.value,
+                gender: this.genderField.value,
+            },
+            staff: this.props.staff.id,
+            store: this.props.defaultStore.id,
+            total_tax: this.state.tax,
+            total_amount: this.state.total,
+            transaction: {
+                all_payments: all_payments.filter((payment) => payment !== undefined)
+            },
+            products_in_sale: this.state.rows.map((row) => {
+                return {
+                    sale: null,
+                    product: row.id,
+                    total_qty: row.quantity
+                }
+            })
+        }
+        this.openSaleDialog()
+        console.log(data)
+        this.props.addSale(data)
+    }
+
+    openSaleDialog(){
+        this.setState({
+            openSaleProgress: true,
+        })
+    }
+
+    closeSaleDialog() {
+        this.props.resetPostSaleValues()
+        this.mobileField.value = ''
+        this.nameField.value = ''
+        this.genderField.value = ''
+        this.setState({
+            openSaleProgress: false,
+            rows: [
+            ],
+            amount: 0,
+            tax: 0,
+            total: 0,
+        })
     }
 
     render(){
         const { classes, theme } = this.props;
         return (
             <div className={classes.root}>
-
+                <SaleProgress 
+                    open={this.state.openSaleProgress}
+                    handleClose={this.closeSaleDialog}
+                    isSaleInProgress={this.props.isSaleInProgress}
+                    isSaleRejected={this.props.isSaleRejected}
+                    isSaleSuccess={this.props.isSaleSuccess}
+                    saleFailError={this.props.saleFailError}
+                />
                 <Grid container spacing={24}>
                     <Grid item xs={12} sm={6}>
                         <Typography style={{marginBottom: theme.spacing.unit*2}}>
@@ -179,32 +269,35 @@ class CashRegister extends React.Component{
                             />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <Typography>
+                        <Typography variant='button'>
                             Customer Detail
                         </Typography>
                         <Grid container spacing={24} style={{marginBottom: theme.spacing.unit*2}}>
                             <Grid item xs={12} sm={4}>
+                                <Typography>Mobile</Typography>
                                 <TextField
                                     name='mobile'
-                                    label='Mobile'
-                                    // placeholder='Enter Mobile'
+                                    // label='Mobile'
+                                    placeholder='Enter Mobile'
                                     onBlur={this.retrieveCustomer}
                                     inputRef={(input) => this.mobileField = input}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={4}>
+                                <Typography>Name</Typography>
                                 <TextField
                                     name='name'
-                                    label='Full Name'
-                                    // placeholder='Enter Name'
+                                    // label='Full Name'
+                                    placeholder='Enter Name'
                                     inputRef={(input) => this.nameField = input}
                                     />
                             </Grid>
                             <Grid item xs={12} sm={4}>
+                                <Typography>Gender</Typography>
                                 <TextField
                                     name='gender'
-                                    label='Gender'
-                                    // placeholder='Enter Gender'
+                                    // label='Gender'
+                                    placeholder='Enter Gender'
                                     inputRef={(input) => this.genderField = input}
                                 />
                             </Grid>
@@ -215,44 +308,52 @@ class CashRegister extends React.Component{
                             total={this.state.total}
                             handleQuantity={this.handleQuantity} 
                             rows={this.state.rows} />
-                        <Typography>
-                            Payment
+                        <Typography variant='button'>
+                            Payment Methods
                         </Typography>
                         <Grid container spacing={24} style={{ marginBottom: theme.spacing.unit * 2 }}>
                             <Grid item xs={12} sm={3}>
+                                <Typography>Cash</Typography>
                                 <TextField
                                     name='cash'
-                                    label='Cash'
+                                    // label='Cash'
+                                    placeholder='Cash'
                                     onChange={(event) => this.handleChange('PAYMENT_CASH', event)}
                                     inputRef={(input) => this.cashField = input}
                                     />
                             </Grid>
                             <Grid item xs={12} sm={3}>
+                            <   Typography>Card</Typography>
                                 <TextField
                                     name='card'
-                                    label='Card'
-                                    onChange={(event) => this.handleChange('PAYMEN_CARDT', event)}
+                                    // label='Card'
+                                    placeholder='Card'
+                                    onChange={(event) => this.handleChange('PAYMENT_CARD', event)}
                                     inputRef={(input) => this.cardField = input}
                                   />
                             </Grid>
                             <Grid item xs={12} sm={3}>
+                                <Typography>Wallet</Typography>                                
                                 <TextField
                                     name='wallet'
-                                    label='Wallet'
+                                    // label='Wallet'
+                                    placeholder='Wallet'
                                     onChange={(event) => this.handleChange('PAYMENT_WALLET', event)}
                                     inputRef={(input) => this.walletField = input}
                                   />
                             </Grid>
                             <Grid item xs={12} sm={3}>
+                                <Typography>UPI</Typography>                            
                                 <TextField
                                     name='upi'
-                                    label='UPI'
+                                    // label='UPI'
+                                    placeholder='UPI'
                                     onChange={(event) => this.handleChange('PAYMENT_UPI', event)}
                                     inputRef={(input) => this.upiField = input}
                                 />
                             </Grid>
                         </Grid>
-                        <Button variant="raised" color="secondary" className={classes.addSaleButton}>
+                        <Button onClick={this.addSale} variant="raised" color="secondary" className={classes.addSaleButton}>
                             Add Sale
                         </Button>
                     </Grid>
@@ -267,6 +368,12 @@ const mapStateToProps = (state) => ({
     loadingProducts: isLoadingAllProducts(state),
     currentCustomer : currentCustomer(state),
     isRetrievingCustomer : isRetrievingCustomer(state),
+    staff: getUser(state),
+    defaultStore: defaultStore(state),
+    isSaleInProgress : isSaleInProgress(state),
+    isSaleSuccess : isSaleSuccess(state),
+    isSaleRejected : isSaleRejected(state),
+    saleFailError : saleFailError(state),
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -277,9 +384,13 @@ const mapDispatchToProps = (dispatch) => ({
         dispatch(retrieveCustomer(mobile))
     },
     clearCustomerDetails: () => {
-        dispatch({
-            type: 'CLEAR__CURRENT_CUSTOMER_DETAILS'
-        })
+        dispatch(clearCustomerDetails())
+    },
+    addSale: (data) => {
+        dispatch(addSale(data))
+    },
+    resetPostSaleValues: () => {
+        dispatch(resetPostSaleValues())
     }
 })
 

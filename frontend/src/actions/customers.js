@@ -15,6 +15,7 @@ export const DELETE_CUSTOMER_FAILURE = '@@customers/DELETE_CUSTOMER_FAILURE';
 export const RETRIEVE_CUSTOMER_REQUEST = '@@customers/RETRIEVE_CUSTOMER_REQUEST';
 export const RETRIEVE_CUSTOMER_SUCCESS = '@@customers/RETRIEVE_CUSTOMER_SUCCESS';
 export const RETRIEVE_CUSTOMER_FAILURE = '@@customers/RETRIEVE_CUSTOMER_FAILURE';
+export const RESET_CURRENT_CUSTOMER = '@@customers/RESET_CURRENT_CUSTOMER';
 
 export const getCustomersList = () => ({
     [RSAA]: {
@@ -78,4 +79,8 @@ export const deleteCustomer = (id) => ({
             DELETE_CUSTOMER_FAILURE,
         ]
     }
+})
+
+export const clearCustomerDetails = () => ({
+    type: RESET_CURRENT_CUSTOMER,
 })

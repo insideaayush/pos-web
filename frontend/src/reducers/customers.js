@@ -1,4 +1,5 @@
 import * as customers from '../actions/customers'
+import * as sales from '../actions/sales'
 
 const initialState = {
     customers: [],
@@ -92,10 +93,10 @@ export default (state = initialState, action) => {
                 ...state,
                 retrievingCutomer: false, 
             }
-        case 'CLEAR__CURRENT_CUSTOMER_DETAILS' :
+        case sales.POST_SALE_RESET_VALUES:
             return {
                 ...state,
-                currentCustomer: undefined,
+                currentCustomer: null,
             }
 
         default:

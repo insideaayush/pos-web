@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 import auth, * as fromAuth from './auth'
+import stores, * as fromStores from './stores'
 import products, * as fromProducts from './products'
 import sales, * as fromSales from './sales'
 import customers, * as fromCustomers from './customers'
@@ -11,6 +12,7 @@ export default combineReducers({
     products: products,
     sales: sales,
     customers: customers,
+    stores: stores,
 })
 
 // Auth Helper Functions
@@ -52,6 +54,29 @@ export const allSales =
 
 export const isLoadingAllSales =
     state => fromSales.isLoadingAllSales(state.sales)
+
+export const isSaleInProgress =
+    state => fromSales.isSaleInProgress(state.sales)
+
+export const isSaleSuccess =
+    state => fromSales.isSaleSuccess(state.sales)
+
+export const isSaleRejected =
+    state => fromSales.isSaleRejected(state.sales)
+
+export const saleFailError =
+    state => fromSales.saleFailError(state.sales)
+    
+
+//Stores Helper Function
+export const allStores =
+    state => fromStores.allStores(state.stores)
+
+export const isLoadingAllStores =
+    state => fromStores.isLoadingAllStores(state.stores)
+
+export const defaultStore = 
+    state => fromStores.defaultStore(state.stores)
 
 //Customers Helper Function
 export const allCustomers =
