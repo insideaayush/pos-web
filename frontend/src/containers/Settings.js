@@ -165,11 +165,11 @@ class Settings extends React.Component{
                         <section className={classes.storeDetail}>
                             Warehouse Name:
                             <span>
-                                {(this.props.defaultWarehouse) ? this.props.defaultWarehouse.name : 'No store set for this client'} <br />
+                                {(this.props.defaultWarehouse) ? this.props.defaultWarehouse.name: ' No warehouse set for this client'} <br />
                             </span>
                             <span>
                                 Warehouse Location :
-                                {(this.props.defaultWarehouse) ? this.props.defaultWarehouse.location : 'No store set for this client'}
+                                {(this.props.defaultWarehouse) ? this.props.defaultWarehouse.location: ' No warehouse set for this client'}
                             </span>
                         </section>
                         <div>

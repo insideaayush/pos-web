@@ -37,9 +37,10 @@ const RowDetail =  (row, props) => {
         { name: 'qty', title: 'Quantity'},
     ]
     let rows = row.products_in_sale.map((pis) => {
+        const prod = props.products.filter((product) => Number(product.id) === Number(pis.product))[0]
         return {
-            id: pis.product,
-            product: props.products.filter((product) => product.id !== pis.product)[0].name,
+            id: prod.product_id,
+            product: prod.name,
             qty: pis.total_qty,
         }
     })
