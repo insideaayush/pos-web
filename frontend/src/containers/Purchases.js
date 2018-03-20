@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { getSalesList } from '../actions/sales'
-import { getStoreList } from '../actions/stores'
+import { getPurchasesList } from '../actions/purchases'
+import { getWarehouseList } from '../actions/warehouses'
 import { getProductList } from '../actions/products'
 import {
-    allSales, isLoadingAllSales, allStores, isLoadingAllStores, allProducts, isLoadingAllProducts } from '../reducers'
+    allPurchases, isLoadingAllPurchases, allWarehouses, isLoadingAllWarehouses, allProducts, isLoadingAllProducts
+} from '../reducers'
 import Paper from 'material-ui/Paper'
 import {
     SortingState,
@@ -30,47 +31,47 @@ const comparePrices = (a, b) => {
     return (_a < _b) ? -1 : 1
 }
 
-const RowDetail =  (row, props) => {
+const RowDetail = (row, props) => {
     const columns = [
-        { name: 'id', title: 'Code'},
-        { name: 'product', title: 'Product'},
-        { name: 'qty', title: 'Quantity'},
+        { name: 'id', title: 'Code' },
+        { name: 'product', title: 'Product' },
+        { name: 'qty', title: 'Quantity' },
     ]
-    let rows = row.products_in_sale.map((pis) => {
+    let rows = row.products_in_purchase.map((pip) => {
         return {
-            id: pis.product,
-            product: props.products.filter((product) => product.id !== pis.product)[0].name,
-            qty: pis.total_qty,
+            id: pip.product,
+            product: props.products.filter((product) => product.id !== pip.product)[0].name,
+            qty: pip.total_qty,
         }
     })
 
     const columnWidth = [
-        { columnName: 'id', width: 120},
-        { columnName: 'product', width: 240},
-        { columnName: 'qty', width: 120},
+        { columnName: 'id', width: 120 },
+        { columnName: 'product', width: 240 },
+        { columnName: 'qty', width: 120 },
     ]
 
     return (
-        <div><strong>Sale: Description: </strong>
+        <div><strong>Purchase: Description: </strong>
             <Grid rows={rows} columns={columns}>
-                <Table/>
-                <TableColumnResizing columnWidths={columnWidth}/>
+                <Table />
+                <TableColumnResizing columnWidths={columnWidth} />
                 <TableHeaderRow />
             </Grid>
         </div>
     )
 };
 
-class SaleTable extends React.PureComponent {
+class PurchaseTable extends React.PureComponent {
     constructor(props) {
         super(props)
         this.state = {
             columns: [
-                { name: 'invoice', title: 'INVOICE ID' },
+                { name: 'purchase_id', title: 'PURCHASE ID' },
                 { name: 'created', title: 'CREATED ON' },
-                { name: 'store', title: 'STORE' },
+                { name: 'warehouse', title: 'WAREHOUSE' },
                 { name: 'staff', title: 'STAFF' },
-                { name: 'customer', title: 'CUSTOMER' },
+                { name: 'vendor', title: 'VENDOR' },
                 { name: 'cgst', title: 'CGST' },
                 { name: 'sgst', title: 'SGST' },
                 { name: 'gst', title: 'GST' },
@@ -92,28 +93,28 @@ class SaleTable extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.props.getSalesList()
-        this.props.getStoreList()
+        this.props.getPurchasesList()
+        this.props.getWarehouseList()
     }
 
     loadRowsFromProps() {
-        if (this.props.sales) {
-            const rows = this.props.sales.map((sale) => {
+        if (this.props.purchases) {
+            const rows = this.props.purchases.map((purchase) => {
                 return {
-                    invoice : sale.invoice_id,
-                    created : sale.created_on,
-                    store : (this.props.stores) ? this.props.stores.filter((store) => store.id === sale.store)[0].name : sale.store,
-                    staff : sale.staff,
-                    customer : sale.customer.name,
-                    cgst : sale.total_tax/2,
-                    sgst : sale.total_tax/2,
-                    gst : sale.total_tax,
-                    net : sale.total_amount,
-                    cash: (sale.transaction.all_payments.filter((payment) => payment.method === 'CSH')[0]) ? (sale.transaction.all_payments.filter((payment) => payment.method === 'CSH')[0]).amount : 0, 
-                    card: (sale.transaction.all_payments.filter((payment) => payment.method === 'CRD')[0]) ? (sale.transaction.all_payments.filter((payment) => payment.method === 'CRD')[0]).amount : 0, 
-                    wallet: (sale.transaction.all_payments.filter((payment) => payment.method === 'WAL')[0]) ? (sale.transaction.all_payments.filter((payment) => payment.method === 'WAL')[0]).amount : 0, 
-                    upi: (sale.transaction.all_payments.filter((payment) => payment.method === 'UPI')[0]) ? (sale.transaction.all_payments.filter((payment) => payment.method === 'UPI')[0]).amount : 0, 
-                    products_in_sale: sale.products_in_sale,
+                    purchase_id: purchase.purchase_id,
+                    created: purchase.created_on,
+                    warehouse: (this.props.warehouses) ? this.props.warehouses.filter((warehouse) => warehouse.id === purchase.warehouse)[0].name : purchase.warehouse,
+                    staff: purchase.staff,
+                    vendor: purchase.vendor.name,
+                    cgst: purchase.total_tax / 2,
+                    sgst: purchase.total_tax / 2,
+                    gst: purchase.total_tax,
+                    net: purchase.total_amount,
+                    cash: (purchase.transaction.all_payments.filter((payment) => payment.method === 'CSH')[0]) ? (purchase.transaction.all_payments.filter((payment) => payment.method === 'CSH')[0]).amount : 0,
+                    card: (purchase.transaction.all_payments.filter((payment) => payment.method === 'CRD')[0]) ? (purchase.transaction.all_payments.filter((payment) => payment.method === 'CRD')[0]).amount : 0,
+                    wallet: (purchase.transaction.all_payments.filter((payment) => payment.method === 'WAL')[0]) ? (purchase.transaction.all_payments.filter((payment) => payment.method === 'WAL')[0]).amount : 0,
+                    upi: (purchase.transaction.all_payments.filter((payment) => payment.method === 'UPI')[0]) ? (purchase.transaction.all_payments.filter((payment) => payment.method === 'UPI')[0]).amount : 0,
+                    products_in_purchase: purchase.products_in_purchase,
                 }
             })
             return rows
@@ -145,7 +146,7 @@ class SaleTable extends React.PureComponent {
                         <Table />
                         <TableHeaderRow showSortingControls />
                         <TableRowDetail
-                            contentComponent={({row}) => RowDetail(row, this.props)}
+                            contentComponent={({ row }) => RowDetail(row, this.props)}
                         />
                         <TableFilterRow />
                         <PagingPanel
@@ -160,10 +161,10 @@ class SaleTable extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-    sales: allSales(state),
-    loading: isLoadingAllSales(state),
-    stores: allStores(state),
-    loadingStores: isLoadingAllStores(state),
+    purchases: allPurchases(state),
+    loading: isLoadingAllPurchases(state),
+    warehouses: allWarehouses(state),
+    loadingWarehouses: isLoadingAllWarehouses(state),
     products: allProducts(state),
     loadingProducts: isLoadingAllProducts(state),
 })
@@ -172,12 +173,12 @@ const mapDispatchToProps = (dispatch) => ({
     getProductList: () => {
         dispatch(getProductList())
     },
-    getSalesList: () => {
-        dispatch(getSalesList())
+    getPurchasesList: () => {
+        dispatch(getPurchasesList())
     },
-    getStoreList: () => {
-        dispatch(getStoreList())
+    getWarehouseList: () => {
+        dispatch(getWarehouseList())
     }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(SaleTable);
+export default connect(mapStateToProps, mapDispatchToProps)(PurchaseTable);

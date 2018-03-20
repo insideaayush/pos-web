@@ -80,18 +80,18 @@ export default (state = initialState, action) => {
         case customers.RETRIEVE_CUSTOMER_REQUEST:
             return {
                 ...state,
-                retrievingCutomer: true,
+                retrievingCustomer: true,
             }
         case customers.RETRIEVE_CUSTOMER_SUCCESS:
             return {
                 ...state,
-                customer: action.payload[0],
-                retrievingCutomer: false,
+                currentCustomer: action.payload[0],
+                retrievingCustomer: false,
             }
         case customers.RETRIEVE_CUSTOMER_FAILURE:
             return {
                 ...state,
-                retrievingCutomer: false, 
+                retrievingCustomer: false, 
             }
         case sales.POST_SALE_RESET_VALUES:
             return {
@@ -106,5 +106,5 @@ export default (state = initialState, action) => {
 
 export const allCustomers = (state) => state.customers
 export const isLoadingAllCustomers = (state) => state.loadingAllCustomers
-export const currentCustomer = (state) => state.customer
-export const isRetrievingCustomer = (state) => state.retrievingCutomer
+export const currentCustomer = (state) => state.currentCustomer
+export const isRetrievingCustomer = (state) => state.retrievingCustomer

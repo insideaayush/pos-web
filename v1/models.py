@@ -53,6 +53,16 @@ class Customer(models.Model):
     def __str__(self):
         return "%s" % (self.name)
 
+class Vendor(models.Model):
+    # remember to remove default
+    name = models.CharField(max_length=200, null=True, blank=True)
+    mobile = models.CharField(max_length=100, unique=True, null=True, blank=True)
+    
+    def __str__(self):
+        return "%s" % (self.name)
+
+
+
 """
 Payments
 """
@@ -132,4 +142,21 @@ class ProductInSale(models.Model):
     total_qty = models.IntegerField(default=0)
 
 
+"""
+Models to register Purchase, Products in Purchase and invoices
+"""
 
+class Purchase(models.Model):
+    purchase_id = models.CharField(default=timezone.now(), max_length=200, unique=True)
+    vendor = models.ForeignKey(Vendor, null=True, on_delete=models.CASCADE)
+    transaction = models.ForeignKey(Transaction, null=True, on_delete=models.CASCADE)
+    staff = models.ForeignKey(Staff, null=True, on_delete=models.CASCADE)
+    warehouse = models.ForeignKey(Warehouse, null=True, on_delete=models.CASCADE)
+    created_on = models.DateTimeField(auto_now_add=True)
+    total_tax = models.DecimalField(default=0, max_digits=10,decimal_places=3)
+    total_amount = models.DecimalField(default=0, max_digits=10,decimal_places=3)
+
+class ProductInPurchase(models.Model):
+    purchase = models.ForeignKey(Purchase, null=True, related_name="products_in_purchase", on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    total_qty = models.IntegerField(default=0)

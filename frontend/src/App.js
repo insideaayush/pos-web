@@ -20,6 +20,8 @@ import SideBarItems from './components/SideBarItems'
 import Products from './containers/Products'
 import Sales from './containers/Sales'
 import CashRegister from './containers/CashRegister'
+import PurchaseRegister from './containers/PurchaseRegister'
+import Purchases from './containers/Purchases'
 import Settings from './containers/Settings'
 
 const drawerWidth = 240;
@@ -97,7 +99,7 @@ const routes = [
     {
         path: "/purchase/add",
         sidebar: () => <div>shoelaces!</div>,
-        main: () => <h2>purchase/add</h2>,
+        main: () => <PurchaseRegister/>,
         title: () => <span> Add a Purchase</span>,
     },
     {
@@ -115,7 +117,7 @@ const routes = [
     {
         path: "/purchases",
         sidebar: () => <div>shoelaces!</div>,
-        main: () => <h2>purchases</h2>,
+        main: () =><Purchases />,
         title: () => <span> Purchases</span>,
     },
     {

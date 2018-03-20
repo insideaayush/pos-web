@@ -1,8 +1,9 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {withStyles} from 'material-ui/styles';
-import {allStores, defaultStore} from '../reducers';
+import {allStores, defaultStore, allWarehouses, defaultWarehouse} from '../reducers';
 import { getStoreList, setDefaultStore} from '../actions/stores';
+import { getWarehouseList, setDefaultWarehouse} from '../actions/warehouses';
 
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
@@ -10,6 +11,7 @@ import Dialog, { DialogActions, DialogContent, DialogTitle } from 'material-ui/D
 import Input, { InputLabel } from 'material-ui/Input';
 import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
+import Grid from 'material-ui/Grid';
 
 const styles = theme => ({
     root: {
@@ -31,8 +33,10 @@ class Settings extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            open: false,
-            id: '',
+            openStore: false,
+            openWarehouse: false,
+            id_store: -1,
+            id_warehouse: -1,
         }
 
         this.handleClickOpen = this.handleClickOpen.bind(this)
@@ -43,30 +47,49 @@ class Settings extends React.Component{
 
     componentDidMount(){
         this.props.getStoreList()
+        this.props.getWarehouseList()
     }
 
-    handleClickOpen(){
-        this.setState({
-            open: true
-        })
+    handleClickOpen(type){
+        if(type === 'STORE'){
+            this.setState({
+                openStore: true
+            })
+        }
+        else{
+            this.setState({
+                openWarehouse: true
+            })
+        }
     }
-
-    handleChange = event => {
-        console.log(event.target.value)
-        this.setState({
-            id: event.target.value
-        })
+    
+    handleChange = (event, type) => {
+        if(type === 'STORE'){
+            this.setState({
+                id_store: event.target.value
+            })
+        }
+        else {
+            this.setState({
+                id_warehouse: event.target.value
+            })
+        }
     };
 
-    handleClose(){
+    handleClose(t){
         this.setState({
-            open: false
+            openStore: false,
+            openWarehouse: false
         })
     }
 
-    handleOk(){
-        console.log(this.state.id)
-        this.props.setDefaultStore(this.state.id)
+    handleOk(type){
+        if(type === 'STORE'){
+            this.props.setDefaultStore(this.state.id_store)
+        }
+        else {
+            this.props.setDefaultWarehouse(this.state.id_warehouse)
+        }
         this.handleClose()
     }
 
@@ -78,54 +101,113 @@ class Settings extends React.Component{
                 <option key={store.id} value={store.id}>{store.name} : {store.location}</option>
             )
         })
+
+        const warehouseOptions = this.props.warehouses.map((warehouse) => {
+            return (
+                <option key={warehouse.id} value={warehouse.id}>{warehouse.name} : {warehouse.location}</option>
+            )
+        })
         return (
             <div className={classes.root} >
-                <Typography variant='title'>
-                    Store Details
-                </Typography>
-                <section className={classes.storeDetail}>
-                    Store Name: 
-                    <span>
-                    {(this.props.defaultStore) ? this.props.defaultStore.name : 'No store set for this client'} <br/>
-                    </span>
-                    <span>
-                    Store Location : 
-                    {(this.props.defaultStore) ? this.props.defaultStore.location : 'No store set for this client'}
-                    </span>
-                </section>
-                <div>
-                    <Button variant="raised" color="secondary" onClick={this.handleClickOpen}>Set Store Now</Button>
-                    <Dialog
-                        disableBackdropClick
-                        disableEscapeKeyDown
-                        open={this.state.open}
-                        onClose={this.handleClose}
-                    >
-                        <DialogTitle>Select the Store</DialogTitle>
-                        <DialogContent>
-                            <form className={classes.container}>
-                                <FormControl className={classes.formControl}>
-                                    <InputLabel htmlFor="store-native-simple">Store</InputLabel>
-                                    <Select
-                                        value={this.state.id}
-                                        onChange={this.handleChange}
-                                        input={<Input id="store-native-simple" />}
-                                    >
-                                        {storeOptions}
-                                    </Select>
-                                </FormControl>
-                            </form>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={this.handleClose} color="primary">
-                                Cancel
+                <Grid container>
+                    <Grid item xs={12} sm={6}>
+                        <Typography variant='title'>
+                            Store Details
+                        </Typography>
+                        <section className={classes.storeDetail}>
+                            Store Name:
+                            <span>
+                                {(this.props.defaultStore) ? this.props.defaultStore.name : 'No store set for this client'} <br />
+                            </span>
+                            <span>
+                                Store Location :
+                                {(this.props.defaultStore) ? this.props.defaultStore.location : 'No store set for this client'}
+                            </span>
+                        </section>
+                        <div>
+                            <Button variant="raised" color="secondary" onClick={() => this.handleClickOpen('STORE')}>Set Store Now</Button>
+                            <Dialog
+                                disableBackdropClick
+                                disableEscapeKeyDown
+                                open={this.state.openStore}
+                                onClose={this.handleClose}
+                            >
+                                <DialogTitle>Select the Store</DialogTitle>
+                                <DialogContent>
+                                    <form className={classes.container}>
+                                        <FormControl className={classes.formControl}>
+                                            <InputLabel htmlFor="store-native-simple">Store</InputLabel>
+                                            <Select
+                                                value={this.state.id_store}
+                                                onChange={(event) => this.handleChange(event, 'STORE')}
+                                                input={<Input id="store-native-simple" />}
+                                            >
+                                                {storeOptions}
+                                            </Select>
+                                        </FormControl>
+                                    </form>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={this.handleClose} color="primary">
+                                        Cancel
                             </Button>
-                            <Button onClick={this.handleOk} color="primary">
-                                Ok
+                                    <Button onClick={() => this.handleOk('STORE')} color="primary">
+                                        Ok
                             </Button>
-                        </DialogActions>
-                    </Dialog>
-                </div>
+                                </DialogActions>
+                            </Dialog>
+                        </div>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Typography variant='title'>
+                            Warehouse Details
+                        </Typography>
+                        <section className={classes.storeDetail}>
+                            Warehouse Name:
+                            <span>
+                                {(this.props.defaultWarehouse) ? this.props.defaultWarehouse.name : 'No store set for this client'} <br />
+                            </span>
+                            <span>
+                                Warehouse Location :
+                                {(this.props.defaultWarehouse) ? this.props.defaultWarehouse.location : 'No store set for this client'}
+                            </span>
+                        </section>
+                        <div>
+                            <Button variant="raised" color="secondary" onClick={() => this.handleClickOpen('WAREHOUSE')}>Set Warehouse Now</Button>
+                            <Dialog
+                                disableBackdropClick
+                                disableEscapeKeyDown
+                                open={this.state.openWarehouse}
+                                onClose={this.handleClose}
+                            >
+                                <DialogTitle>Select the Warehouse</DialogTitle>
+                                <DialogContent>
+                                    <form className={classes.container}>
+                                        <FormControl className={classes.formControl}>
+                                            <InputLabel htmlFor="store-native-simple">Store</InputLabel>
+                                            <Select
+                                                value={this.state.id_warehouse}
+                                                onChange={(event) => this.handleChange(event, "WAREHOUSE")}
+                                                input={<Input id="store-native-simple" />}
+                                            >
+                                                {warehouseOptions}
+                                            </Select>
+                                        </FormControl>
+                                    </form>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={this.handleClose} color="primary">
+                                        Cancel
+                            </Button>
+                                    <Button onClick={() => this.handleOk('WAREHOUSE')} color="primary">
+                                        Ok
+                            </Button>
+                                </DialogActions>
+                            </Dialog>
+                        </div>
+                    </Grid>
+                </Grid>
+
             </div>
         )
     }
@@ -133,7 +215,9 @@ class Settings extends React.Component{
 
 const mapStateToProps = (state) => ({
     stores: allStores(state),
+    warehouses: allWarehouses(state),
     defaultStore: defaultStore(state),
+    defaultWarehouse: defaultWarehouse(state),
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -142,6 +226,12 @@ const mapDispatchToProps = (dispatch) => ({
     },
     setDefaultStore: (id) => {
         dispatch(setDefaultStore(id))
+    },
+    getWarehouseList: () => {
+        dispatch(getWarehouseList())
+    },
+    setDefaultWarehouse: (id) => {
+        dispatch(setDefaultWarehouse(id))
     },
 })
 

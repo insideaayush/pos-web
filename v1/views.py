@@ -33,9 +33,19 @@ class CustomerViewset(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('mobile', 'name')
 
+class VendorViewset(viewsets.ModelViewSet):
+    queryset = Vendor.objects.all()
+    serializer_class =VendorSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('mobile', 'name')
+
 class StoreViewset(viewsets.ModelViewSet):
     queryset = Store.objects.all()
     serializer_class =StoreSerializer
+
+class WarehouseViewset(viewsets.ModelViewSet):
+    queryset = Warehouse.objects.all()
+    serializer_class =WarehouseSerializer
 
 class ProductViewset(viewsets.ModelViewSet):
     """
@@ -65,10 +75,24 @@ class SaleViewset(viewsets.ModelViewSet):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
 
+class PurchaseViewset(viewsets.ModelViewSet):
+    """
+    This view automatically provides list, detail, retrieve, update, partial update and delete actions
+    """
+    queryset = Purchase.objects.all()
+    serializer_class = PurchaseSerializer
+
 class ProductInSaleViewset(viewsets.ModelViewSet):
     """
     This view automatically provides list, detail, retrieve, update, partial update and delete actions
     """
     queryset = ProductInSale.objects.all()
     serializer_class = ProductInSaleSerializer
+
+class ProductInPurchaseViewset(viewsets.ModelViewSet):
+    """
+    This view automatically provides list, detail, retrieve, update, partial update and delete actions
+    """
+    queryset = ProductInPurchase.objects.all()
+    serializer_class = ProductInPurchaseSerializer
 
