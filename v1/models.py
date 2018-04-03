@@ -145,7 +145,6 @@ class ProductInSale(models.Model):
 """
 Models to register Purchase, Products in Purchase and invoices
 """
-
 class Purchase(models.Model):
     purchase_id = models.CharField(default=timezone.now(), max_length=200, unique=True)
     vendor = models.ForeignKey(Vendor, null=True, on_delete=models.CASCADE)
@@ -160,3 +159,12 @@ class ProductInPurchase(models.Model):
     purchase = models.ForeignKey(Purchase, null=True, related_name="products_in_purchase", on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     total_qty = models.IntegerField(default=0)
+
+"""
+Inventory related models
+"""
+class ProductStockLevel(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    store = models.ForeignKey(Store, null=True, blank=True, on_delete=models.CASCADE)
+    warehouse = models.ForeignKey(Warehouse, null=True, blank=True, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=0)

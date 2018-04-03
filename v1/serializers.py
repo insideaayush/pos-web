@@ -51,19 +51,19 @@ class ProductSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = (
-            'url', 
-            'id', 
-            'name', 
-            'product_id', 
-            'description', 
-            'cost_price', 
-            'max_retail_price', 
-            'selling_price', 
-            'category', 
-            'brand', 
-            'color', 
-            'design', 
-            'size', 
+            'url',
+            'id',
+            'name',
+            'product_id',
+            'description',
+            'cost_price',
+            'max_retail_price',
+            'selling_price',
+            'category',
+            'brand',
+            'color',
+            'design',
+            'size',
             'quality'
         )
 
@@ -94,9 +94,9 @@ class SaleSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = Sale
         fields = (
-            'url', 
+            'url',
             'id',
-            'invoice_id', 
+            'invoice_id',
             'channel',
             'customer',
             'transaction',
@@ -105,7 +105,7 @@ class SaleSerializer(QueryFieldsMixin, serializers.ModelSerializer):
             'created_on',
             'total_tax',
             'total_amount',
-            'products_in_sale', 
+            'products_in_sale',
         )
 
     def create(self, validated_data):
@@ -118,15 +118,30 @@ class SaleSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         if customer_data.get('mobile'):
             customer = Customer.objects.create(**customer_data)
         else:
-            cus_id = self.context['request'].data['customer']['id']   
+            cus_id = self.context['request'].data['customer']['id']
             customer = Customer.objects.get(pk=cus_id)
-        for payment_data in all_payments_data:
-            transaction.all_payments.add(Payment.objects.create(**payment_data))
         with trxn.atomic():
+            # check if items are in stock or not
+            for product_in_sale_data in products_in_sale_data:
+                try:
+                    product_stock_level = ProductStockLevel.objects.get(product=product_in_sale_data['product'], store=validated_data.get('store'))
+                except:
+                    raise serializers.ValidationError("Item not in Stock")
+                else:
+                    if not product_stock_level.quantity >= product_in_sale_data.get('total_qty'):
+                        raise serializers.ValidationError("Item not sufficiently in Stock")
+            for payment_data in all_payments_data:
+                transaction.all_payments.add(Payment.objects.create(**payment_data))
             sale = Sale.objects.create(customer=customer, transaction=transaction, invoice_id=get_next_invoice_no(store_id), **validated_data)
-        for product_in_sale_data in products_in_sale_data:
-            product_in_sale_data.pop('sale')
-            ProductInSale.objects.create( sale=sale, **product_in_sale_data)
+            for product_in_sale_data in products_in_sale_data:
+                product_in_sale_data.pop('sale')
+                ProductInSale.objects.create( sale=sale, **product_in_sale_data)
+                product_stock_level = ProductStockLevel.objects.get(
+                    product=product_in_sale_data['product'],
+                    store=validated_data.get('store'))
+                product_stock_level.quantity -= product_in_sale_data.get(
+                    'total_qty')
+                product_stock_level.save()
         return sale
 
 class PurchaseSerializer(QueryFieldsMixin, serializers.ModelSerializer):
@@ -136,9 +151,9 @@ class PurchaseSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = Purchase
         fields = (
-            'url', 
+            'url',
             'id',
-            'purchase_id', 
+            'purchase_id',
             'vendor',
             'transaction',
             'staff',
@@ -146,7 +161,7 @@ class PurchaseSerializer(QueryFieldsMixin, serializers.ModelSerializer):
             'created_on',
             'total_tax',
             'total_amount',
-            'products_in_purchase', 
+            'products_in_purchase',
         )
 
     def create(self, validated_data):
@@ -159,16 +174,36 @@ class PurchaseSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         if vendor_data.get('mobile'):
             vendor = Vendor.objects.create(**vendor_data)
         else:
-            vendor_id = self.context['request'].data['vendor']['id']   
+            vendor_id = self.context['request'].data['vendor']['id']
             vendor = Vendor.objects.get(pk=vendor_id)
         for payment_data in all_payments_data:
             transaction.all_payments.add(Payment.objects.create(**payment_data))
         with trxn.atomic():
             purchase = Purchase.objects.create(vendor=vendor, transaction=transaction, purchase_id=get_next_purchase_no(warehouse_id), **validated_data)
-        for product_in_purchase_data in products_in_purchase_data:
-            product_in_purchase_data.pop('purchase')
-            ProductInPurchase.objects.create( purchase=purchase, **product_in_purchase_data)
+            for product_in_purchase_data in products_in_purchase_data:
+                product_in_purchase_data.pop('purchase')
+                ProductInPurchase.objects.create(purchase=purchase, **product_in_purchase_data)
+                try:
+                    product_stock_level = ProductStockLevel.objects.get(product=product_in_purchase_data['product'], warehouse=validated_data.get('warehouse'))
+                except :
+                    product_stock_level = ProductStockLevel.objects.create(product=product_in_purchase_data['product'], warehouse=validated_data.get('warehouse'), quantity=product_in_purchase_data.get('total_qty'))
+                else:
+                    product_stock_level.quantity += product_in_purchase_data.get('total_qty')
+                    product_stock_level.save()
         return purchase
 
+class ProductStockLevelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
+    product = ProductSerializer()
+    store = StoreSerializer()
+    warehouse = WarehouseSerializer()
 
-
+    class Meta:
+        model = ProductStockLevel
+        fields = (
+            'url',
+            'id',
+            'product',
+            'store',
+            'warehouse',
+            'quantity',
+        )

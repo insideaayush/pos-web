@@ -13,6 +13,7 @@ import PurchaseIcon from 'material-ui-icons/ShoppingCart';
 import ShoppingBasketIcon from 'material-ui-icons/ShoppingBasket';
 import SettingsIcon from 'material-ui-icons/Settings';
 import LogoutIcon from 'material-ui-icons/ExitToApp';
+import StockIcon from 'material-ui-icons/FilterNone';
 
 const styles = theme => ({
     root: {
@@ -41,6 +42,11 @@ const sidebarItems = {
             text: 'All Products',
             icon: <ListIcon />,
             url: '/products',
+        },
+        {
+            text: 'Stock Level',
+            icon: <StockIcon />,
+            url: '/stock',
         },
         {
             text: 'All Sales',

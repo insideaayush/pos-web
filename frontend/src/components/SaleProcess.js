@@ -32,12 +32,11 @@ class SaleProgress extends React.Component {
                 }
                 {
                     (this.props.isSaleRejected) ?
-                    <span>Sale was Rejected.<br /> {this.props.SaleFailError}</span>
+                    <span>Sale was Rejected.<br /> {this.props.saleFailError}</span>
                     : null
                 }
             </div>
         )
-
         return (
             <div>
                 <Dialog

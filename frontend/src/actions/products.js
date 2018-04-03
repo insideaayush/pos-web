@@ -12,6 +12,9 @@ export const PATCH_PRODUCT_FAILURE = '@@products/PATCH_PRODUCT_FAILURE';
 export const DELETE_PRODUCT_REQUEST = '@@products/DELETE_PRODUCT_REQUEST';
 export const DELETE_PRODUCT_SUCCESS = '@@products/DELETE_PRODUCT_SUCCESS';
 export const DELETE_PRODUCT_FAILURE = '@@products/DELETE_PRODUCT_FAILURE';
+export const GET_ALL_PRODUCTS_STOCK_LEVEL_REQUEST = '@@products/GET_ALL_PRODUCTS_STOCK_LEVEL_REQUEST'
+export const GET_ALL_PRODUCTS_STOCK_LEVEL_SUCCESS = '@@products/GET_ALL_PRODUCTS_STOCK_LEVEL_SUCCESS'
+export const GET_ALL_PRODUCTS_STOCK_LEVEL_FAILURE = '@@products/GET_ALL_PRODUCTS_STOCK_LEVEL_FAILURE'
 
 export const getProductList = () => ({
     [RSAA]: {
@@ -64,3 +67,4 @@ export const deleteProduct = (id) => ({
         ]
     }
 })
+

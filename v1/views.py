@@ -96,3 +96,9 @@ class ProductInPurchaseViewset(viewsets.ModelViewSet):
     queryset = ProductInPurchase.objects.all()
     serializer_class = ProductInPurchaseSerializer
 
+class ProductStockLevelViewset(viewsets.ReadOnlyModelViewSet):
+    """
+    This view automatically provides list, detail, retrieve, update, partial update and delete actions
+    """
+    queryset = ProductStockLevel.objects.all()
+    serializer_class = ProductStockLevelSerializer

@@ -8,6 +8,7 @@ import sales, * as fromSales from './sales'
 import purchases, * as fromPurchases from './purchases'
 import customers, * as fromCustomers from './customers'
 import vendors, * as fromVendors from './vendors'
+import productstocklevel, * as fromProductstocklevel from './productstocklevel'
 
 export default combineReducers({
     auth: auth,
@@ -19,6 +20,7 @@ export default combineReducers({
     vendors: vendors,
     stores: stores,
     warehouses: warehouses,
+    productstocklevel: productstocklevel,
 })
 
 // Auth Helper Functions
@@ -126,7 +128,7 @@ export const currentCustomer =
 export const isRetrievingCustomer =
     state => fromCustomers.isRetrievingCustomer(state.customers)
 
-    //Vendors Helper Function
+//Vendors Helper Function
 export const allVendors =
     state => fromVendors.allVendors(state.vendors)
 
@@ -138,3 +140,10 @@ export const currentVendor =
 
 export const isRetrievingVendor =
     state => fromVendors.isRetrievingVendor(state.vendors)
+    
+// Product Stock levels Helper Function
+export const stockLevels =
+    state => fromProductstocklevel.stockLevels(state.productstocklevel)
+
+    export const loadingStockLevels =
+    state => fromProductstocklevel.loadingStockLevels(state.productstocklevel)

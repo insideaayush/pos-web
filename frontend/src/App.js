@@ -23,6 +23,7 @@ import CashRegister from './containers/CashRegister'
 import PurchaseRegister from './containers/PurchaseRegister'
 import Purchases from './containers/Purchases'
 import Settings from './containers/Settings'
+import ProductStockLevel from './containers/ProductStockLevel'
 
 const drawerWidth = 240;
 
@@ -107,6 +108,12 @@ const routes = [
         sidebar: () => <div>bubblegum!</div>,
         main: () => <Products edit={true} />,
         title: () => <span> Products</span>,
+    },
+    {
+        path: "/stock",
+        sidebar: () => <div>bubblegum!</div>,
+        main: () => <ProductStockLevel edit={true} />,
+        title: () => <span> Stock Level</span>,
     },
     {
         path: "/sales",

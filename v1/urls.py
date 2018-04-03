@@ -19,6 +19,7 @@ router.register(r'sales', views.SaleViewset)
 router.register(r'productinsales', views.ProductInSaleViewset)
 router.register(r'purchases', views.PurchaseViewset)
 router.register(r'productinpurchases', views.ProductInPurchaseViewset)
+router.register(r'productstocklevel', views.ProductStockLevelViewset)
 
 urlpatterns = [
     path('schema/', schema_view),

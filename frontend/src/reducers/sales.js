@@ -44,7 +44,7 @@ export default (state = initialState, action) => {
                 ...state,
                 saleInProcess: false,
                 lastSaleFailed: true,
-                saleFailError: action.error, // TODO: remember to test this
+                saleFailError: action.payload.response[0], // TODO: remember to test this
             }
         case sales.POST_SALE_RESET_VALUES:
             return {
