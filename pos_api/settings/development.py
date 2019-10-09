@@ -1,7 +1,7 @@
 from pos_api.settings.common import *
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'b8&k!skhmvvm@^7h%cj^0snc!av5*w6rr!f#d@^(@cpj#q)1l8'
+SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
